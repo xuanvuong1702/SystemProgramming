@@ -221,59 +221,59 @@ for (; i++ < 5;) { // i=1,2,3,4,5
 }
 ```
 
-# Other Gotchas
-## C Preprocessor macros and precedence
+# Những Vấn Đề Khác
+## Macro Tiền Xử Lý C và Độ Ưu Tiên
 
-Preprocessing is an operation performed **before** the program is actually compiled. It is nothing but text substitution, i.e. copy-and-paste. Consider the following code.
+Tiền xử lý là một hoạt động được thực hiện **trước** khi chương trình thực sự được biên dịch. Nó không là gì khác ngoài việc thay thế văn bản, tức là sao chép và dán. Hãy xem xét đoạn mã sau.
 ```C
 #define BADD(x,y) x+y
 char buffer[BADD(5,5)*2];
 ```
 
-After preprocessing, the code will look exactly like this.
+Sau khi tiền xử lý, mã sẽ trông chính xác như thế này.
 ```C
 char buffer[5+5*2];
 ```
 
-Notice that the buffer takes up 15 bytes instead of 20, since multiplication has higher precedence than addition. To prevent this kind of behavior, make sure to surround all macro variables as well as the entire macro expression with parentheses.
+Chú ý rằng bộ đệm chiếm 15 byte thay vì 20, vì phép nhân có độ ưu tiên cao hơn phép cộng. Để ngăn chặn hành vi này, hãy đảm bảo bao quanh tất cả các biến macro cũng như toàn bộ biểu thức macro bằng dấu ngoặc đơn.
 ```C
 #define ADD(x,y) ((x)+(y))
 ```
 
-## C Preprocessor Macros and Side-Effects
+## Macro Tiền Xử Lý C và Hiệu Ứng Phụ
 ```C
 #define min(a,b) ((a)<(b) ? (a) : (b))
 int x = 4;
 if (min(x++, 100)) printf("%d is six", x);
 ```
-The conditional expression effectively expands to `x++ < 100 ? x++ : 100`, which results in `x` being incremented twice. There is no good way to prevent these kinds of side effects when using Standard C macros. But [GNU C](https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html) provides some workarounds (only works when using GCC).
+Biểu thức điều kiện mở rộng thành `x++ < 100 ? x++ : 100`, dẫn đến `x` được tăng hai lần. Không có cách tốt nào để ngăn chặn những hiệu ứng phụ này khi sử dụng macro C chuẩn. Nhưng [GNU C](https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html) cung cấp một số giải pháp (chỉ hoạt động khi sử dụng GCC).
 
-## `sizeof(type[])` vs `sizeof(type *)`
+## `sizeof(type[])` so với `sizeof(type *)`
 ```C
 #define ARRAY_LENGTH(A) (sizeof((A)) / sizeof((A)[0]))
 int fixed_length_array[10]; // ARRAY_LENGTH(fixed_length_array) = 10
-int *dynamic_array = malloc(10); // ARRAY_LENGTH(dynamic_array) = 2 or 1
+int *dynamic_array = malloc(10); // ARRAY_LENGTH(dynamic_array) = 2 hoặc 1
 ```
-If we have a declared array variable like `fixed_length_array`, the `sizeof` operator yields the bytes that array takes up, and dividing this size by the size of the first element yields the number of elements in the array. Unfortunately, the size of a pointer is always the same (8 or 4 bytes), no matter the size or type of the array to which it points. Only compile-time declared array variables (and [C99 variable-length arrays](https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html)) will expose the true array size through `sizeof`.
+Nếu chúng ta có một biến mảng đã được khai báo như `fixed_length_array`, toán tử `sizeof` sẽ trả về số byte mà mảng chiếm, và chia kích thước này cho kích thước của phần tử đầu tiên sẽ cho ra số lượng phần tử trong mảng. Thật không may, kích thước của một con trỏ luôn giống nhau (8 hoặc 4 byte), không phụ thuộc vào kích thước hoặc loại của mảng mà nó trỏ đến. Chỉ có các biến mảng được khai báo tại thời điểm biên dịch (và [mảng có độ dài biến thiên C99](https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html)) mới tiết lộ kích thước mảng thực sự thông qua `sizeof`.
 
-## `sizeof` and Side-Effects
+## `sizeof` và Hiệu Ứng Phụ
 
 ```C
 int a = 0;
 size_t size = sizeof(a++);
 printf("size: %lu, a: %d", size, a);
 ```
-This code prints out the following.
+Đoạn mã này in ra như sau.
 ```C
 size: 4, a: 0
 ```
-The expression passed into `sizeof` is not actually evaluated at runtime in most cases, since the type (hence the size) of the expression can be calculated at compile time. Though there are exceptions in the case of [C99 variable-length arrays](http://port70.net/~nsz/c/c11/n1570.html#6.5.3.4p2), since their sizes are determined at runtime.
+Biểu thức được truyền vào `sizeof` thực sự không được đánh giá tại thời gian chạy trong hầu hết các trường hợp, vì kiểu (do đó kích thước) của biểu thức có thể được tính toán tại thời điểm biên dịch. Tuy nhiên, có những ngoại lệ trong trường hợp của [mảng có độ dài biến thiên C99](http://port70.net/~nsz/c/c11/n1570.html#6.5.3.4p2), vì kích thước của chúng được xác định tại thời gian chạy.
 
 <div align="center">
 <a href="https://github.com/angrave/SystemProgramming/wiki/C-Programming,-Part-2:-Text-Input-And-Output">
-Back: C Programming, Part 2: Text Input And Output
+Quay lại: Lập trình C, Phần 2: Nhập và Xuất Văn Bản
 </a> |
 <a href="https://github.com/angrave/SystemProgramming/wiki/C-Programming%2C-Part-4%3A-Strings-and-Structs">
-Next: C Programming, Part 4: Strings and Structs
+Tiếp theo: Lập trình C, Phần 4: Chuỗi và Cấu trúc
 </a>
 </div>
