@@ -145,7 +145,7 @@ Bởi vì tất cả những gì trình biên dịch của bạn làm là nói '
 
 ## Những offset này có nghĩa là gì?
 
-Các offset là nơi biến bắt đầu. Biến điện thoại bắt đầu ở byte `0x128` và tiếp tục cho sizeof(int) byte, nhưng không phải lúc nào cũng vậy. **Offset không xác định nơi biến kết thúc**. Xem xét hack sau mà bạn thấy trong rất nhiều mã kernel.
+Các offset là nơi biến bắt đầu. Biến phone bắt đầu ở byte `0x128` và tiếp tục cho sizeof(int) byte, nhưng không phải lúc nào cũng vậy. **Offset không xác định nơi biến kết thúc**. Xem xét hack sau mà bạn thấy trong rất nhiều mã kernel.
 
 ```C
 
