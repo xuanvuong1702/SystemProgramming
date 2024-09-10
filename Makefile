@@ -9,10 +9,10 @@ ALL_BUILDS = website $(TARGET)
 all: $(ALL_BUILDS)
 
 $(TARGET): $(LANGS)
-	mkdir -p website/public/modern-cpp/$@/
+	mkdir -p website/public/system-programming/$@/
 	for lang in $^ ; do \
 		cd $@/$${lang} && make && make clean && cd ../..; \
-		mv $@/$${lang}/$(NAME).$@ website/public/modern-cpp/$@/$(NAME)-$${lang}.$@; \
+		mv $@/$${lang}/$(NAME).$@ website/public/system-programming/$@/$(NAME)-$${lang}.$@; \
 	done
 
 website:

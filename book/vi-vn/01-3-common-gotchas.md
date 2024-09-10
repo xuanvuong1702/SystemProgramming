@@ -24,59 +24,57 @@ char *str1 = "Brandon Chong là TA tốt nhất";
 char *str2 = "Brandon Chong là TA tốt nhất";
 str1 == str2; // đúng
 ```
-The strings pointed to by `str1` and `str2` may actually reside in the same location in memory.
+Các chuỗi mà `str1` và `str2` trỏ đến có thể thực sự nằm ở cùng một vị trí trong bộ nhớ.
 
-Char arrays, however, contain deep copies of string literals assigned to them, and different arrays represent different memory locations. These following char arrays do not reside in the same place in memory.
+Tuy nhiên, mảng ký tự chứa các bản sao sâu của chuỗi ký tự được gán cho chúng, và các mảng khác nhau đại diện cho các vị trí bộ nhớ khác nhau. Những mảng ký tự sau đây không nằm ở cùng một nơi trong bộ nhớ.
 
 ```C
-char arr1[] = "Brandon Chong didn't write this";
-char arr2[] = "Brandon Chong didn't write this";
-arr1 == arr2;         // false
-&arr1[0] == &arr2[0]; // false
+char arr1[] = "Brandon Chong không viết cái này";
+char arr2[] = "Brandon Chong không viết cái này";
+arr1 == arr2;         // sai
+&arr1[0] == &arr2[0]; // sai
 ```
-
-## Buffer Overflow / Underflow
+## Tràn bộ đệm / Dưới bộ đệm
 ```C
 int i = 10, array[10];
 for (; i >= 0; i--) array[i] = i;
 ```
-C does not perform bounds-checking on array accesses. The above example writes into `array[10]` which is outside the array bounds. This can corrupt other variables on the stack as well as the very implementation of the call stack, exposing your program to attacks from hackers. In practice, these overflows often result from using unsafe library calls or putting the wrong size limit on a safer library call.
+C không thực hiện kiểm tra giới hạn khi truy cập mảng. Ví dụ trên viết vào `array[10]` nằm ngoài giới hạn của mảng. Điều này có thể làm hỏng các biến khác trên stack cũng như cách thực hiện của stack gọi, khiến chương trình của bạn dễ bị tấn công từ hacker. Trên thực tế, những tràn này thường xuất phát từ việc sử dụng các lệnh thư viện không an toàn hoặc đặt giới hạn kích thước sai trên một lệnh thư viện an toàn hơn.
 
 ```C
-gets(array); // Let's hope the input is shorter than my array! (NEVER use gets)
-fgets(array, 4096, stdin); // Whoops 
+gets(array); // Hy vọng đầu vào ngắn hơn mảng của tôi! (KHÔNG BAO GIỜ sử dụng gets)
+fgets(array, 4096, stdin); // Ôi chao
 ```
-
-## Handling Pointers to Out-of-Scope Automatic Variables
+## Xử lý con trỏ đến các biến tự động nằm ngoài phạm vi
 ```C
 int *f() {
-    int result = 42;
-    static int imok;
-    int *p;
-    {
-      int x = result;
-      p = &x;
-    }
-    //imok = *p;      // Not OK: x has already gone out of scope
-    //return &result; // Not OK: result will go out of scope after the function returns 
-    return &imok;     // OK - static variables are not on the stack
+        int result = 42;
+        static int imok;
+        int *p;
+        {
+            int x = result;
+            p = &x;
+        }
+        //imok = *p;      // Không ổn: x đã ra khỏi phạm vi
+        //return &result; // Không ổn: result sẽ ra khỏi phạm vi sau khi hàm trả về 
+        return &imok;     // Ổn - các biến static không nằm trên stack
 }
 ```
-Automatic variables are bound to stack memory only as long as they are in scope. After they go out of scope, the data stored at their memory addresses becomes undefined. Static variables reside in the data segment, which is safe to access even when those variables are not in scope.
+Các biến tự động chỉ được gắn với bộ nhớ stack miễn là chúng đang trong phạm vi. Sau khi chúng ra khỏi phạm vi, dữ liệu được lưu trữ tại địa chỉ bộ nhớ của chúng trở nên không xác định. Các biến static nằm trong phân đoạn dữ liệu, có thể truy cập an toàn ngay cả khi các biến đó không nằm trong phạm vi.
 
-## `sizeof(type *)` versus `sizeof(type)` 
+## `sizeof(type *)` so với `sizeof(type)` 
 ```C
 struct User {
-   char name[100];
+  char name[100];
 };
 typedef struct User user_t;
 
 user_t *user = (user_t *) malloc(sizeof (user_t *));
 ```
-In the above example, we needed to allocate enough bytes for the struct. Instead, we allocated enough bytes to hold a pointer. Writing to the user pointer might corrupt the heap. The correct code is shown below.
+Trong ví dụ trên, chúng ta cần phân bổ đủ byte cho struct. Thay vào đó, chúng ta đã phân bổ đủ byte để giữ một con trỏ. Việc ghi vào con trỏ người dùng có thể làm hỏng heap. Mã đúng được hiển thị bên dưới.
 ```C
 struct User {
-   char name[100];
+  char name[100];
 };
 typedef struct User user_t;
 
