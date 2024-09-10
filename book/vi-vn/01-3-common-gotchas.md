@@ -80,56 +80,52 @@ typedef struct User user_t;
 
 user_t *user = (user_t *) malloc(sizeof (user_t));
 ```
+## Chuỗi yêu cầu `strlen(s)+1` byte
 
-## Strings Require `strlen(s)+1` Bytes
-
-Every string must have a null byte after the last actual character. To store the string <code>"Hi"</code> it takes 3 bytes: <code>[H] [i] [\0]</code>.
+Mỗi chuỗi phải có một byte null sau ký tự cuối cùng. Để lưu trữ chuỗi "Hi" mất 3 byte: [H] [i] [\0].
 
 ```C
-char *strdup(const char *input) {     /* return a copy of 'input' */
-    char *copy;
-    copy = malloc(sizeof (char *));   /* nope! this allocates space for a pointer, not a string */
-    copy = malloc(strlen(input));     /* Almost...but what about the null terminator? */
-    copy = malloc(strlen(input) + 1); /* That's right. */
-    strcpy(copy, input);              /* strcpy will provide the null terminator */
-    return copy;
+char *strdup(const char *input) {     /* trả về một bản sao của 'input' */
+  char *copy;
+  copy = malloc(sizeof (char *));   /* không! điều này cấp phát không gian cho một con trỏ, không phải là một chuỗi */
+  copy = malloc(strlen(input));     /* Gần rồi...nhưng còn ký tự kết thúc null thì sao? */
+  copy = malloc(strlen(input) + 1); /* Đúng rồi. */
+  strcpy(copy, input);              /* strcpy sẽ cung cấp ký tự kết thúc null */
+  return copy;
 }
 ```
-
-## Failing to Initialize Memory
+## Không khởi tạo bộ nhớ
 ```C
 void myfunct() {
-    char array[10];
-    char *p = malloc(10);
-    printf("%s %s\n", array, p);
+  char array[10];
+  char *p = malloc(10);
+  printf("%s %s\n", array, p);
 }
 ```
-Automatic (stack) variables and heap memory obtained with `malloc` are not initialized to zero by default. The function above results in undefined behavior.
+Các biến tự động (stack) và bộ nhớ heap được lấy bằng `malloc` không được khởi tạo thành zero theo mặc định. Hàm trên dẫn đến hành vi không xác định.
 
-## Double-free
+## Giải phóng hai lần
 ```C
 char *p = malloc(10);
 free(p);
-//  .. later ...
-free(p); 
+//  .. sau đó ...
+free(p);
 ```
-It is an error to free the same heap memory twice.
+Đó là một lỗi khi giải phóng cùng một bộ nhớ heap hai lần.
 
-## Dangling Pointers
+## Con trỏ treo
 ```C
 char *p = malloc(10);
 strcpy(p, "Hello");
 free(p);
-//  .. later ...
-strcpy(p,"World"); 
+//  .. sau đó ...
+strcpy(p,"World");
 ```
-Accessing freed memory results in undefined behavior. A defensive programming practice is to set pointers to NULL as soon as the memory is freed, since there is no other way to reliably check if a pointer points to a valid address. The following macro accomplishes this.
-
+Truy cập vào bộ nhớ đã được giải phóng dẫn đến hành vi không xác định. Một thực hành lập trình phòng ngự là đặt con trỏ thành NULL ngay khi bộ nhớ được giải phóng, vì không có cách nào khác để kiểm tra một con trỏ có trỏ đến một địa chỉ hợp lệ hay không. Macro sau đây thực hiện điều này.
 ```C
 #define safer_free(p) {free(p); (p) = NULL;}
 ```
-
-## Forgetting to Copy `getline` Buffer
+## Quên sao chép bộ đệm `getline`
 ```C
 #include <stdio.h>
   
@@ -138,63 +134,62 @@ int main(void){
   size_t linecap = 0;
   char *strings[3];
 
-  // assume stdin contains "1\n2\n\3\n"
+  // giả sử stdin chứa "1\n2\n\3\n"
   for (size_t i = 0; i < 3; ++i)
     strings[i] = getline(&line, &linecap, stdin) >= 0 ? line : "";
 
-  // this prints out "3\n3\n\3n" instead of "3\n\2\n1\n"
+  // đoạn này in ra "3\n3\n\3n" thay vì "3\n\2\n1\n"
   for (size_t i = 3; i--;) // i=2,1,0
     printf("%s", strings[i]);
 }
 ```
-Since `getline` reuses a buffer, all pointers in the `strings` array are actually pointing to the same memory. We can fix this by setting the assignment of `strings[i]` to a deep copy of the buffer.
+Vì `getline` tái sử dụng một bộ đệm, tất cả các con trỏ trong mảng `strings` thực sự đều đang trỏ đến cùng một bộ nhớ. Chúng ta có thể sửa điều này bằng cách đặt phép gán của `strings[i]` thành một bản sao sâu của bộ đệm.
 ```C
-   strings[i] = getline(&line, &linecap, stdin) >= 0 ? strdup(line) : "";
+  strings[i] = getline(&line, &linecap, stdin) >= 0 ? strdup(line) : "";
 ```
-Fun fact: providing "1\n123456789abcdef\n3\n" to the broken version of the program might cause it to print out "3\n3\n1\n" instead of "3\n3\n3\n". Now why might that be? 
-*Hint: use Valgrind*
+Thực tế thú vị: nếu cung cấp "1\n123456789abcdef\n3\n" cho phiên bản lỗi của chương trình, nó có thể in ra "3\n3\n1\n" thay vì "3\n3\n3\n". Vậy tại sao lại như vậy? 
+*Gợi ý: sử dụng Valgrind*
 
-# Logic and Program Flow Mistakes
-## Forgetting `break` after `case` 
+# Lỗi Logic và Lỗi Trong Luồng Chương Trình
+## Quên `break` sau `case` 
 ```C
-int flag = 1; // Will print all three lines.
+int flag = 1; // Sẽ in ra tất cả ba dòng.
 switch (flag) {
-case 1: printf("I'm printed\n");
-case 2: printf("Me too\n");
-case 3: printf("Me three\n");
+case 1: printf("Tôi được in\n");
+case 2: printf("Tôi cũng vậy\n");
+case 3: printf("Tôi cũng thế\n");
 }
 ```
-Case statements without a break will just continue onto the code of the next case statement. The correct code is shown below. The break for the last statement is unnecessary because there are no more cases to be executed after the last one.
+Các câu lệnh `case` không có `break` sẽ tiếp tục thực thi mã của câu lệnh `case` tiếp theo. Mã đúng được hiển thị bên dưới. `break` cho câu lệnh cuối cùng không cần thiết vì không còn thêm câu lệnh `case` nào để thực thi sau câu lệnh cuối cùng.
 ```C
-int flag = 1; // Will print only "I'm printed\n"
+int flag = 1; // Chỉ in "Tôi được in\n"
 switch (flag) {
 case 1: 
-    printf("I'm printed\n");
+    printf("Tôi được in\n");
     break;
 case 2: 
-    printf("Me too\n");
+    printf("Tôi cũng vậy\n");
     break;
 case 3: 
-    printf("Me three\n");
-    break; //unnecessary
+    printf("Tôi cũng thế\n");
+    break; //không cần thiết
 }
 ```
 
-## Assignment vs Equality Check
+## Gán so với Kiểm tra Bằng Nhau
 
 ```C
-int answer = 3; // Will print out the answer.
-if (answer = 42) { printf("I've solved the answer! It's %d", answer); }
+int answer = 3; // Sẽ in ra câu trả lời.
+if (answer = 42) { printf("Tôi đã giải quyết câu trả lời! Nó là %d", answer); }
 ```
-Compilers will usually warn you about this mistake. If you really want to perform an assignment, add an extra pair of parentheses to suppress these warnings.
+Trình biên dịch thường sẽ cảnh báo bạn về lỗi này. Nếu bạn thực sự muốn thực hiện một phép gán, hãy thêm một cặp dấu ngoặc để tắt những cảnh báo này.
 ```C
 ssize_t x;
 if ( (x = read(somefd, somebuf, somenum)) ){
-  // do something
+    // do something
 }
 ```
-
-## Undeclared or Incorrectly Prototyped Functions
+## Hàm Không Được Khai Báo hoặc Khai Báo Sai
 
 ```C
 #include <stdio.h>
@@ -203,26 +198,26 @@ int main(void){
   printf("%d\n", start);
 }
 ```
-The library call `time` actually takes a parameter (a pointer to some memory that can receive the `time_t` structure). The compiler might not catch this error because the programmer did not provide a valid function prototype by including time.h. For this reason, calling undeclared functions is illegal in C99 and beyond.
+Thư viện `time` thực sự yêu cầu một tham số (một con trỏ đến một vùng nhớ có thể nhận cấu trúc `time_t`). Trình biên dịch có thể không bắt lỗi này vì lập trình viên không cung cấp một nguyên mẫu hàm hợp lệ bằng cách bao gồm time.h. Vì lý do này, việc gọi các hàm chưa được khai báo là bất hợp pháp trong C99 và sau.
 
-## Extra Semicolons
+## Dấu chấm phẩy thừa
 
-Semicolons after `for` and `while` statements will cause them to be interpreted as "empty loops".
+Dấu chấm phẩy sau các câu lệnh `for` và `while` sẽ khiến chúng được hiểu là "vòng lặp trống".
 
 ```C
 int i;
 for (i = 0; i < 5; i++);{
-  printf("I'm printed once\n");
+  printf("Tôi chỉ được in một lần\n");
 }
-while (i < 10); // program goes into infinite loop
-  i++;          // this code is never executed
+while (i < 10); // chương trình đi vào vòng lặp vô hạn
+  i++;          // đoạn mã này không bao giờ được thực thi
 ```
 
-Adding semicolons adjacent to each other in code blocks is perfectly legal and is ignored by the compiler. You can also omit components of a `for` statement by putting nothing between semicolons or between semicolons and parentheses.
+Thêm dấu chấm phẩy liên tiếp vào các khối mã là hoàn toàn hợp pháp và sẽ bị trình biên dịch bỏ qua. Bạn cũng có thể bỏ qua các thành phần của câu lệnh `for` bằng cách không đặt gì giữa các dấu chấm phẩy hoặc giữa dấu chấm phẩy và dấu ngoặc đơn.
 ```C
 int i = 0;
 for (; i++ < 5;) { // i=1,2,3,4,5
-    printf("%d\n", i);;;;;;;;;;;;;
+  printf("%d\n", i);;;;;;;;;;;;;
 }
 ```
 
