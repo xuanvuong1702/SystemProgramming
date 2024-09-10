@@ -6,9 +6,9 @@ Kernel là phần trung tâm của hệ điều hành quản lý các quy trình
 Tìm hiểu thêm:
 [[http://en.wikipedia.org/wiki/Kernel_%28operating_system%29]]
 
-## Quá trình là gì?
+## Process là gì?
 
-Quá trình là một thể hiện của một chương trình đang chạy trên máy. Có thể có nhiều quá trình của cùng một chương trình. Ví dụ, bạn và tôi có thể cùng đang chạy 'cat' hoặc 'gnuchess'
+Process(Quá trình) là một thể hiện của một chương trình đang chạy trên máy. Có thể có nhiều quá trình của cùng một chương trình. Ví dụ, bạn và tôi có thể cùng đang chạy 'cat' hoặc 'gnuchess'
 
 Quá trình chứa mã chương trình và thông tin trạng thái có thể thay đổi như biến, tín hiệu, mô tả tệp mở cho tệp, kết nối mạng và các tài nguyên hệ thống khác được lưu trữ bên trong bộ nhớ của quá trình. Hệ điều hành cũng lưu trữ thông tin siêu dữ liệu về quá trình được sử dụng bởi hệ thống để quản lý và giám sát hoạt động của quá trình và sử dụng tài nguyên.
 
