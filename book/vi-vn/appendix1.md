@@ -1,3 +1,10 @@
+---
+title: "Phụ Lục 1: Tài Liệu Học Tập Thêm"
+type: book-vi-vn
+order: 11
+---
+
+# Bảng thuật ngữ
 Cảnh báo: Khác với một bảng thuật ngữ đầy đủ, bảng thuật ngữ không chính thức này bỏ qua chi tiết và cung cấp một giải thích đơn giản và dễ tiếp cận cho mỗi thuật ngữ. Để biết thêm thông tin và chi tiết, hãy sử dụng công cụ tìm kiếm web yêu thích của bạn.
 
 ## Kernel là gì?

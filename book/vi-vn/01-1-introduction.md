@@ -1,3 +1,9 @@
+---
+title: "Chương 01: Giới thiệu ngôn ngữ lập trình C"
+type: book-vi-vn
+order: 1
+---
+
 # Muốn có một giới thiệu nhanh về C?
 
 * Tiếp tục đọc để có một khóa học nhanh về lập trình C bên dưới
@@ -332,8 +338,3 @@ comparator gt = greater_than;
 ## Wow, đó là rất nhiều về C
 Đừng lo, còn nhiều điều nữa sắp tới!
 
-<div align="center">
-<a href="https://github.com/angrave/SystemProgramming/wiki/C-Programming%2C-Part-2%3A-Text-Input-And-Output">
-Tiếp theo: Lập trình C, Phần 2: Nhập và Xuất Văn bản
-</a>
-</div>

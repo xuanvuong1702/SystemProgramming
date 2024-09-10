@@ -1,3 +1,10 @@
+---
+title: "Chương 01: Giới thiệu ngôn ngữ lập trình C"
+type: book-vi-vn
+order: 2
+---
+
+
 # In ra Luồng
 
 ## Làm thế nào để in chuỗi, số nguyên, ký tự ra luồng xuất chuẩn?
