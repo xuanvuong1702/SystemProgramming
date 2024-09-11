@@ -10,8 +10,8 @@ revision:
 	@echo 'title: "Lập trình hệ thống"' >> meta.markdown
 	@echo 'author: UniBook  <system-programming[at]unibook.com>' >> meta.markdown
 	@echo 'subtitle: |' >> meta.markdown
-	@echo 'Nội dung trong tệp PDF này có thể đã lỗi thời, vui lòng kiểm tra trang web của chúng tôi <https://changkun.de/modern-cpp> hoặc kho lưu trữ GitHub <https://github.com/changkun/modern-cpp-tutorial> để cập nhật sách mới nhất. Cập nhật lần cuối: ${date}' >> meta.markdown
-	@echo 'rights: © Ou Changkun, CC BY-NC-ND 4.0.' >> meta.markdown
+	@echo 'Nội dung trong tệp PDF này có thể đã lỗi thời, vui lòng kiểm tra trang web của chúng tôi <https://uniqbook.com/system-programming> hoặc kho lưu trữ GitHub <https://github.com/unibook/system-programming> để cập nhật sách mới nhất. Cập nhật lần cuối: ${date}' >> meta.markdown
+	@echo 'rights: © Unibook, CC BY-NC-ND 4.0.' >> meta.markdown
 	@echo 'ibooks:' >> meta.markdown
 	@echo '  - version: ${revision}' >> meta.markdown
 	@echo '---' >> meta.markdown

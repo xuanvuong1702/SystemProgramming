@@ -1,3 +1,9 @@
+---
+title: "Chương 01: Học ngữ lập trình C"
+type: book-vi-vn
+order: 5
+---
+
 # Hướng dẫn Hitchhiker về Debugging Chương trình C
 
 Đây sẽ là một hướng dẫn toàn diện để giúp bạn debug chương trình C của mình. Có các cấp độ khác nhau mà bạn có thể kiểm tra lỗi và chúng tôi sẽ đi qua hầu hết chúng. Hãy tự do thêm bất cứ điều gì bạn thấy hữu ích trong việc debug chương trình C bao gồm nhưng không giới hạn, sử dụng debugger, nhận biết các loại lỗi phổ biến, gotchas, và mẹo tìm kiếm Google hiệu quả.

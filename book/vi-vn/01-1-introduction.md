@@ -1,5 +1,5 @@
 ---
-title: "Chương 01: Giới thiệu ngôn ngữ lập trình C"
+title: "Chương 01: Học ngữ lập trình C"
 type: book-vi-vn
 order: 1
 ---

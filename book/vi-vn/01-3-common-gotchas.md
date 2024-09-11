@@ -1,13 +1,10 @@
 ---
-title: "Chương 01: Giới thiệu ngôn ngữ lập trình C"
+title: "Chương 01: Học ngữ lập trình C"
 type: book-vi-vn
 order: 3
 ---
 
-
-Những lỗi phổ biến mà lập trình viên C thường mắc phải?
-
-# Lỗi liên quan đến bộ nhớ
+# Những lỗi phổ biến mà lập trình viên C thường mắc phải?
 
 ## Hằng chuỗi chỉ có thể đọc
 ```C

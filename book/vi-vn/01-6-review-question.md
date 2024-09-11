@@ -1,3 +1,10 @@
+---
+title: "Chương 01: Học ngữ lập trình C"
+type: book-vi-vn
+order: 6
+---
+
+
 # Các Chủ Đề
 * Biểu diễn chuỗi C
 * Chuỗi C dưới dạng con trỏ

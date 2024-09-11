@@ -1,3 +1,11 @@
+---
+title: "Chương 01: Học ngữ lập trình C"
+type: book-vi-vn
+order: 4
+---
+
+
+
 # Chuỗi, Cấu trúc, và Những điểm cần chú ý
 
 # Vậy chuỗi là gì?
