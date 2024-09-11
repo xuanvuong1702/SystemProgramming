@@ -1,6 +1,9 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "my_string.h"
 
 void Question1()
@@ -89,13 +92,12 @@ void Question4_2(){
 
 }
 
-void Question6(){
-    //what is the different between malloc and calloc?
-    // answer: malloc function is used to allocate memory blocks of a specified size. It does not initialize the memory allocated. calloc function is used to allocate memory blocks of a specified size and initializes the memory allocated to zero.
-    // vietnamese: hàm malloc được sử dụng để cấp phát các khối bộ nhớ có kích thước cụ thể. Nó không khởi tạo bộ nhớ được cấp phát. hàm calloc được sử dụng để cấp phát các khối bộ nhớ có kích thước cụ thể và khởi tạo bộ nhớ được cấp phát thành số không.
-    char *str = (char*)malloc(10);
-    char *str2 = (char*)calloc(10, sizeof(char));
+void Question12() {
+    const char* filename = "example.txt";
+    const char* str = "Hello, world!";
+    printFileInChunks(filename, str);
 }
+
 
 int main()
 {
