@@ -8,7 +8,7 @@ LABEL "homepage"="https://unibook.com/modern-cpp/"
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-WORKDIR /systemprograming
+WORKDIR /system-programming
 
 # Node & Npm & Python3 are from node:latest
 # Install Texlive & Pandoc
