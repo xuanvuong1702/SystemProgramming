@@ -44,7 +44,7 @@ void selection_sort(int *a, long len);
 
 Và lỗi cụ thể nằm trong một hàm.
 
-Cuối cùng, chúng tôi không phải là một lớp học về tái cấu trúc/debug code của bạn. Thực tế, hầu hết code hệ thống quá tồi tệ đến nỗi bạn không muốn đọc nó. Nhưng vì lợi ích của việc debug, bạn có thể hưởng lợi trong dài hạn nếu áp dụng một số thực hành.
+Cuối cùng, cuốn sách này không phải là một lớp học về tái cấu trúc/debug code của bạn. Thực tế, hầu hết code hệ thống quá tồi tệ đến nỗi bạn không muốn đọc nó. Nhưng vì lợi ích của việc debug, bạn có thể hưởng lợi trong dài hạn nếu áp dụng một số thực hành tốt (best practive).
 
 ## Asserts!
 
