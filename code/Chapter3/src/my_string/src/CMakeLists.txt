@@ -1,0 +1,1 @@
+add_library(my_string SHARED my_string.c)

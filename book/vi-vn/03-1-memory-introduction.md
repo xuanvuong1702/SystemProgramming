@@ -37,6 +37,7 @@ Ví dụ về đầu ra: `The top of heap went from 0x4000 to 0xa000`
 
 ## Calloc là gì?
 Khác với `malloc`, `calloc` khởi tạo nội dung bộ nhớ thành zero và cũng nhận hai đối số (số lượng mục và kích thước bằng byte của mỗi mục). Một cách thực hiện `calloc` dễ hiểu nhưng hơi ngây thơ như sau:
+
 ```C
 void *calloc(size_t n, size_t size)
 {
