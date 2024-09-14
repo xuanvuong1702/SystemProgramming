@@ -1,5 +1,4 @@
 # !/usr/bin/env python3
-# author: changkun<hi[at]changkun.de>
 
 import os
 
@@ -29,7 +28,7 @@ chapters = [
 ignores = ['TOC', 'Table of Content', 'License', 'license']
 
 
-with open('modern-cpp-tutorial.md', 'w') as outfile:
+with open('system-programming.md', 'w') as outfile:
     outfile.write("""---
 title: "Lập trình hệ thống"
 author: Unibook <system-programming[at]unibook.com>
