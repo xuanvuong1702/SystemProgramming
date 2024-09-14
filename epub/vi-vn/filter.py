@@ -1,5 +1,4 @@
 # !/usr/bin/env python3
-# author: changkun<hi[at]changkun.de>
 
 import os
 

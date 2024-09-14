@@ -26,7 +26,23 @@ epub: markdown
 		00-preface.md.markdown \
 		01-1-introduction.md.markdown \
 		01-2-text-input-and-output.md.markdown \
-		01-3-common-gotchas.md.markdown \
+		01-3-common-gotchas.md.markdown \ 
+		01-4-string-and-struct.md.markdown \
+		01-5-debugging.md.markdown \
+		01-6-review-question.md.markdown \
+		02-1-kernel-shells-terminals.md.markdown \
+		02-2-process-introduction.md.markdown \
+		02-3-porking-introduction.md.markdown \
+		02-4-fork-exec-wait.md.markdown \
+		02-5-wait-macros-using-signals.md.markdown \
+		02-6-review-question.md.markdown \
+		03-1-memory-introduction.md.markdown \
+		03-2-memory-allocator.md.markdown \
+		03-3-smashing-example.md.markdown \
+		03-4-review-questions.md.markdown \
+		04-1-pthread-introduction.md.markdown \
+		04-3-parallel-problems.md.markdown \
+		04-4-reviews-questions.md.markdown \
 		appendix1.md.markdown \
 		
 	@echo "Done."
