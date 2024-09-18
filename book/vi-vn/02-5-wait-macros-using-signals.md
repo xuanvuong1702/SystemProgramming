@@ -80,6 +80,7 @@ Nếu thành công, nó sẽ đóng băng quy trình; tức là, quy trình sẽ
 
 Ví dụ,
 Dưới đây là chương trình in ra một dấu chấm mỗi giây, lên đến 59 dấu chấm.
+
 ```C
 #include <unistd.h>
 #include <stdio.h>

@@ -40,11 +40,13 @@ char** ptr = malloc(10); //0x100
 ptr[0] = malloc(20); //0x200
 ptr[1] = malloc(20); //0x300
 ```
+
      * `ptr + 2`
      * `ptr + 4`
      * `ptr[0] + 4`
      * `ptr[1] + 2000`
      * `*((int)(ptr + 1)) + 3`
+     
 9. Làm thế nào để ngăn chặn lỗi giải phóng bộ nhớ kép?
 10. Định dạng printf để in một chuỗi, `int`, hoặc `char` là gì?
 11. Đoạn mã sau có hợp lệ không? Nếu có, tại sao? `output` được đặt ở đâu?

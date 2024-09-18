@@ -14,6 +14,7 @@ Lệnh hệ thống `fork` sao chép quy trình hiện tại để tạo một q
 Chỉ là một nhận xét nhỏ, trong các hệ thống UNIX cũ, không gian địa chỉ toàn bộ của quy trình cha được sao chép trực tiếp (bất kể tài nguyên có được sửa đổi hay không). Ngày nay, kernel thực hiện [copy-on-write](https://en.wikipedia.org/wiki/Copy-on-write), giúp tiết kiệm rất nhiều tài nguyên, đồng thời rất hiệu quả về thời gian.
 ## Ví dụ đơn giản nhất về `fork()` là gì?
 Dưới đây là một ví dụ rất đơn giản...
+
 ```C
 printf("Tôi chỉ được in ra một lần!\n");
 fork();
