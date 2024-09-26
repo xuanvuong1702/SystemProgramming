@@ -5,7 +5,6 @@ order: 1
 ---
 
 # Muốn có một giới thiệu nhanh về C?
-
 * Tiếp tục đọc để có một khóa học nhanh về lập trình C bên dưới
 * Sau đó xem [[trang wiki về các lỗi thường gặp trong C|C Programming, Part 3: Common Gotchas]].
 * Và tìm hiểu về [[nhập/xuất văn bản|C Programming, Part 2: Text Input And Output]].
@@ -338,3 +337,8 @@ comparator gt = greater_than;
 ## Wow, đó là rất nhiều về C
 Đừng lo, còn nhiều điều nữa sắp tới!
 
+<div align="center">
+<a href="https://github.com/angrave/SystemProgramming/wiki/C-Programming%2C-Part-2%3A-Text-Input-And-Output">
+Next: Ngôn ngữ lập trình C, Part 2: Text Input và Output
+</a>
+</div>
