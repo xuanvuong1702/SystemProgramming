@@ -1,5 +1,5 @@
 ---
-title: "Chương 01: Học ngữ lập trình C"
+title: "Chương 01: Học Ngôn Ngữ Lập Trình C, Phần 3: Các Lỗi Thường Gặp"
 type: book-vi-vn
 order: 3
 ---
@@ -11,19 +11,19 @@ order: 3
 char array[] = "Hi!"; // mảng chứa một bản sao có thể thay đổi
 strcpy(array, "OK");
 
-char *ptr = "Can't change me"; // ptr trỏ đến một số bộ nhớ không thể thay đổi
+char *ptr = "Can't change me"; // ptr trỏ đến một vùng nhớ không thể thay đổi
 strcpy(ptr, "Will not work"); // sẽ không hoạt động
 ```
-Hằng chuỗi là các mảng ký tự được lưu trữ trong phân đoạn mã của chương trình, không thể thay đổi. Hai hằng chuỗi có thể chia sẻ cùng một không gian trong bộ nhớ. Dưới đây là một ví dụ:
+**Hằng chuỗi** (string literal) là các mảng ký tự được lưu trữ trong phân đoạn mã của chương trình, không thể thay đổi. Hai hằng chuỗi có thể chia sẻ cùng một không gian trong bộ nhớ. Dưới đây là một ví dụ:
 
 ```C
-char *str1 = "Brandon Chong là TA tốt nhất";
-char *str2 = "Brandon Chong là TA tốt nhất";
+char *str1 = "Brandon Chong là trợ giảng tốt nhất";
+char *str2 = "Brandon Chong là trợ giảng tốt nhất";
 str1 == str2; // đúng
 ```
 Các chuỗi mà `str1` và `str2` trỏ đến có thể thực sự nằm ở cùng một vị trí trong bộ nhớ.
 
-Tuy nhiên, mảng ký tự chứa các bản sao sâu của chuỗi ký tự được gán cho chúng, và các mảng khác nhau đại diện cho các vị trí bộ nhớ khác nhau. Những mảng ký tự sau đây không nằm ở cùng một nơi trong bộ nhớ.
+Tuy nhiên, **mảng ký tự** (character array) chứa các bản sao sâu của chuỗi ký tự được gán cho chúng, và các mảng khác nhau đại diện cho các vị trí bộ nhớ khác nhau. Những mảng ký tự sau đây không nằm ở cùng một nơi trong bộ nhớ.
 
 ```C
 char arr1[] = "Brandon Chong không viết cái này";
@@ -36,11 +36,11 @@ arr1 == arr2;         // sai
 int i = 10, array[10];
 for (; i >= 0; i--) array[i] = i;
 ```
-C không thực hiện kiểm tra giới hạn khi truy cập mảng. Ví dụ trên viết vào `array[10]` nằm ngoài giới hạn của mảng. Điều này có thể làm hỏng các biến khác trên stack cũng như cách thực hiện của stack gọi, khiến chương trình của bạn dễ bị tấn công từ hacker. Trên thực tế, những tràn này thường xuất phát từ việc sử dụng các lệnh thư viện không an toàn hoặc đặt giới hạn kích thước sai trên một lệnh thư viện an toàn hơn.
+C không thực hiện kiểm tra giới hạn khi truy cập mảng. Ví dụ trên ghi vào `array[10]` nằm ngoài giới hạn của mảng (mảng chỉ có các phần tử từ `array[0]` đến `array[9]`). Điều này có thể làm hỏng các biến khác trên ngăn xếp cũng như cách thực hiện của ngăn xếp gọi hàm, khiến chương trình của bạn dễ bị tấn công từ hacker. Trên thực tế, những **lỗi tràn bộ đệm** này thường xuất phát từ việc sử dụng các lệnh gọi hàm thư viện không an toàn hoặc đặt giới hạn kích thước sai trên một lệnh gọi hàm thư viện an toàn hơn.
 
 ```C
 gets(array); // Hy vọng đầu vào ngắn hơn mảng của tôi! (KHÔNG BAO GIỜ sử dụng gets)
-fgets(array, 4096, stdin); // Ôi chao
+fgets(array, 4096, stdin); // Ôi chao (nếu kích thước của array nhỏ hơn 4096)
 ```
 ## Xử lý con trỏ đến các biến tự động nằm ngoài phạm vi
 ```C
@@ -57,7 +57,7 @@ int *f() {
         return &imok;     // Ổn - các biến static không nằm trên stack
 }
 ```
-Các biến tự động chỉ được gắn với bộ nhớ stack miễn là chúng đang trong phạm vi. Sau khi chúng ra khỏi phạm vi, dữ liệu được lưu trữ tại địa chỉ bộ nhớ của chúng trở nên không xác định. Các biến static nằm trong phân đoạn dữ liệu, có thể truy cập an toàn ngay cả khi các biến đó không nằm trong phạm vi.
+Các biến tự động (**automatic variable**) chỉ được gắn với bộ nhớ ngăn xếp miễn là chúng đang trong phạm vi. Sau khi chúng ra khỏi phạm vi, dữ liệu được lưu trữ tại địa chỉ bộ nhớ của chúng trở nên không xác định. Các biến tĩnh (**static variable**) nằm trong phân đoạn dữ liệu, có thể truy cập an toàn ngay cả khi các biến đó không nằm trong phạm vi.
 
 ## `sizeof(type *)` so với `sizeof(type)` 
 ```C
@@ -68,7 +68,7 @@ typedef struct User user_t;
 
 user_t *user = (user_t *) malloc(sizeof (user_t *));
 ```
-Trong ví dụ trên, chúng ta cần phân bổ đủ byte cho struct. Thay vào đó, chúng ta đã phân bổ đủ byte để giữ một con trỏ. Việc ghi vào con trỏ người dùng có thể làm hỏng heap. Mã đúng được hiển thị bên dưới.
+Trong ví dụ trên, chúng ta cần phân bổ đủ byte cho struct `user_t`. Thay vào đó, chúng ta đã phân bổ đủ byte để chứa một con trỏ. Việc ghi vào con trỏ `user` có thể làm hỏng heap. Mã đúng được hiển thị bên dưới.
 ```C
 struct User {
   char name[100];
@@ -79,7 +79,7 @@ user_t *user = (user_t *) malloc(sizeof (user_t));
 ```
 ## Chuỗi yêu cầu `strlen(s)+1` byte
 
-Mỗi chuỗi phải có một byte null sau ký tự cuối cùng. Để lưu trữ chuỗi "Hi" mất 3 byte: [H] [i] [\0].
+Mỗi chuỗi phải có một byte null (`\0`) sau ký tự cuối cùng. Để lưu trữ chuỗi "Hi" cần 3 byte: `[H] [i] [\0]`.
 
 ```C
 char *strdup(const char *input) {     /* trả về một bản sao của 'input' */
@@ -99,18 +99,18 @@ void myfunct() {
   printf("%s %s\n", array, p);
 }
 ```
-Các biến tự động (stack) và bộ nhớ heap được lấy bằng `malloc` không được khởi tạo thành zero theo mặc định. Hàm trên dẫn đến hành vi không xác định.
+Các biến tự động (trên ngăn xếp) và bộ nhớ heap được cấp phát bằng `malloc` không được khởi tạo thành zero theo mặc định. Hàm trên dẫn đến **hành vi không xác định** (undefined behavior).
 
-## Giải phóng hai lần
+## Giải phóng bộ nhớ hai lần (double-free)
 ```C
 char *p = malloc(10);
 free(p);
 //  .. sau đó ...
 free(p);
 ```
-Đó là một lỗi khi giải phóng cùng một bộ nhớ heap hai lần.
+Giải phóng cùng một vùng nhớ heap hai lần là một lỗi.
 
-## Con trỏ treo
+## Con trỏ lơ lửng (dangling pointer)
 ```C
 char *p = malloc(10);
 strcpy(p, "Hello");
@@ -118,7 +118,7 @@ free(p);
 //  .. sau đó ...
 strcpy(p,"World");
 ```
-Truy cập vào bộ nhớ đã được giải phóng dẫn đến hành vi không xác định. Một thực hành lập trình phòng ngự là đặt con trỏ thành NULL ngay khi bộ nhớ được giải phóng, vì không có cách nào khác để kiểm tra một con trỏ có trỏ đến một địa chỉ hợp lệ hay không. Macro sau đây thực hiện điều này.
+Truy cập vào bộ nhớ đã được giải phóng dẫn đến hành vi không xác định. Một thực hành lập trình phòng thủ là đặt con trỏ thành `NULL` ngay khi bộ nhớ được giải phóng, vì không có cách nào khác để kiểm tra một cách đáng tin cậy xem một con trỏ có trỏ đến một địa chỉ hợp lệ hay không. Macro sau đây thực hiện điều này.
 ```C
 #define safer_free(p) {free(p); (p) = NULL;}
 ```
@@ -131,11 +131,11 @@ int main(void){
   size_t linecap = 0;
   char *strings[3];
 
-  // giả sử stdin chứa "1\n2\n\3\n"
+  // giả sử stdin chứa "1\n2\n3\n"
   for (size_t i = 0; i < 3; ++i)
     strings[i] = getline(&line, &linecap, stdin) >= 0 ? line : "";
 
-  // đoạn này in ra "3\n3\n\3n" thay vì "3\n\2\n1\n"
+  // đoạn này in ra "3\n3\n3\n" thay vì "3\n2\n1\n"
   for (size_t i = 3; i--;) // i=2,1,0
     printf("%s", strings[i]);
 }
@@ -173,20 +173,20 @@ case 3:
 }
 ```
 
-## Gán so với Kiểm tra Bằng Nhau
+## Phép gán so với Kiểm tra bằng nhau
 
 ```C
 int answer = 3; // Sẽ in ra câu trả lời.
 if (answer = 42) { printf("Tôi đã giải quyết câu trả lời! Nó là %d", answer); }
 ```
-Trình biên dịch thường sẽ cảnh báo bạn về lỗi này. Nếu bạn thực sự muốn thực hiện một phép gán, hãy thêm một cặp dấu ngoặc để tắt những cảnh báo này.
+Trình biên dịch thường sẽ cảnh báo bạn về lỗi này. Nếu bạn thực sự muốn thực hiện một phép gán trong điều kiện `if`, hãy thêm một cặp dấu ngoặc đơn để tắt những cảnh báo này.
 ```C
 ssize_t x;
 if ( (x = read(somefd, somebuf, somenum)) ){
-    // do something
+    // làm gì đó nếu read() trả về giá trị khác 0
 }
 ```
-## Hàm Không Được Khai Báo hoặc Khai Báo Sai
+## Hàm không được khai báo hoặc khai báo nguyên mẫu sai
 
 ```C
 #include <stdio.h>
@@ -195,16 +195,16 @@ int main(void){
   printf("%d\n", start);
 }
 ```
-Thư viện `time` thực sự yêu cầu một tham số (một con trỏ đến một vùng nhớ có thể nhận cấu trúc `time_t`). Trình biên dịch có thể không bắt lỗi này vì lập trình viên không cung cấp một nguyên mẫu hàm hợp lệ bằng cách bao gồm time.h. Vì lý do này, việc gọi các hàm chưa được khai báo là bất hợp pháp trong C99 và sau.
+Hàm thư viện `time` thực sự yêu cầu một tham số (một con trỏ đến một vùng nhớ có thể nhận cấu trúc `time_t`). Trình biên dịch có thể không bắt lỗi này vì lập trình viên không cung cấp một nguyên mẫu hàm hợp lệ bằng cách thêm `#include <time.h>`. Vì lý do này, việc gọi các hàm chưa được khai báo là bất hợp pháp trong C99 và các phiên bản mới hơn.
 
 ## Dấu chấm phẩy thừa
 
-Dấu chấm phẩy sau các câu lệnh `for` và `while` sẽ khiến chúng được hiểu là "vòng lặp trống".
+Dấu chấm phẩy sau các câu lệnh `for` và `while` sẽ khiến chúng được hiểu là "vòng lặp rỗng".
 
 ```C
 int i;
-for (i = 0; i < 5; i++);{
-  printf("Tôi chỉ được in một lần\n");
+for (i = 0; i < 5; i++);{ 
+  printf("Tôi chỉ được in một lần\n"); // Khối lệnh này nằm ngoài vòng lặp for
 }
 while (i < 10); // chương trình đi vào vòng lặp vô hạn
   i++;          // đoạn mã này không bao giờ được thực thi
@@ -214,14 +214,14 @@ Thêm dấu chấm phẩy liên tiếp vào các khối mã là hoàn toàn hợ
 ```C
 int i = 0;
 for (; i++ < 5;) { // i=1,2,3,4,5
-  printf("%d\n", i);;;;;;;;;;;;;
+  printf("%d\n", i);;;;;;;;;;;;; // Các dấu chấm phẩy thừa này sẽ bị bỏ qua
 }
 ```
 
-# Những Vấn Đề Khác
-## Macro Tiền Xử Lý C và Độ Ưu Tiên
+# Những vấn đề khác
+## Macro tiền xử lý C và độ ưu tiên
 
-Tiền xử lý là một hoạt động được thực hiện **trước** khi chương trình thực sự được biên dịch. Nó không là gì khác ngoài việc thay thế văn bản, tức là sao chép và dán. Hãy xem xét đoạn mã sau.
+**Tiền xử lý** (preprocessing) là một hoạt động được thực hiện **trước** khi chương trình thực sự được biên dịch. Nó không là gì khác ngoài việc thay thế văn bản, tức là sao chép và dán. Hãy xem xét đoạn mã sau.
 ```C
 #define BADD(x,y) x+y
 char buffer[BADD(5,5)*2];
@@ -237,23 +237,23 @@ Chú ý rằng bộ đệm chiếm 15 byte thay vì 20, vì phép nhân có đ�
 #define ADD(x,y) ((x)+(y))
 ```
 
-## Macro Tiền Xử Lý C và Hiệu Ứng Phụ
+## Macro tiền xử lý C và hiệu ứng phụ
 ```C
 #define min(a,b) ((a)<(b) ? (a) : (b))
 int x = 4;
 if (min(x++, 100)) printf("%d is six", x);
 ```
-Biểu thức điều kiện mở rộng thành `x++ < 100 ? x++ : 100`, dẫn đến `x` được tăng hai lần. Không có cách tốt nào để ngăn chặn những hiệu ứng phụ này khi sử dụng macro C chuẩn. Nhưng [GNU C](https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html) cung cấp một số giải pháp (chỉ hoạt động khi sử dụng GCC).
+Biểu thức điều kiện được mở rộng thành `x++ < 100 ? x++ : 100`, dẫn đến `x` được tăng hai lần. Không có cách tốt nào để ngăn chặn những hiệu ứng phụ này khi sử dụng macro C chuẩn. Nhưng [GNU C](https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html) cung cấp một số giải pháp (chỉ hoạt động khi sử dụng GCC).
 
 ## `sizeof(type[])` so với `sizeof(type *)`
 ```C
 #define ARRAY_LENGTH(A) (sizeof((A)) / sizeof((A)[0]))
 int fixed_length_array[10]; // ARRAY_LENGTH(fixed_length_array) = 10
-int *dynamic_array = malloc(10); // ARRAY_LENGTH(dynamic_array) = 2 hoặc 1
+int *dynamic_array = malloc(10); // ARRAY_LENGTH(dynamic_array) = 2 hoặc 1 (trên hệ thống 64-bit hoặc 32-bit)
 ```
-Nếu chúng ta có một biến mảng đã được khai báo như `fixed_length_array`, toán tử `sizeof` sẽ trả về số byte mà mảng chiếm, và chia kích thước này cho kích thước của phần tử đầu tiên sẽ cho ra số lượng phần tử trong mảng. Thật không may, kích thước của một con trỏ luôn giống nhau (8 hoặc 4 byte), không phụ thuộc vào kích thước hoặc loại của mảng mà nó trỏ đến. Chỉ có các biến mảng được khai báo tại thời điểm biên dịch (và [mảng có độ dài biến thiên C99](https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html)) mới tiết lộ kích thước mảng thực sự thông qua `sizeof`.
+Nếu chúng ta có một biến mảng đã được khai báo như `fixed_length_array`, toán tử `sizeof` trả về số byte mà mảng chiếm dụng, và chia kích thước này cho kích thước của phần tử đầu tiên sẽ cho ra số lượng phần tử trong mảng. Tuy nhiên, kích thước của một con trỏ luôn giống nhau (8 byte trên hệ thống 64-bit hoặc 4 byte trên hệ thống 32-bit), bất kể kích thước hoặc kiểu của mảng mà nó trỏ đến. Chỉ có các biến mảng được khai báo tại thời điểm biên dịch (và [mảng có độ dài biến đổi C99](https://gcc.gnu.org/onlinedocs/gcc/Variable-Length.html)) mới cho phép biết kích thước mảng thực sự thông qua `sizeof`.
 
-## `sizeof` và Hiệu Ứng Phụ
+## `sizeof` và hiệu ứng phụ
 
 ```C
 int a = 0;
@@ -261,16 +261,16 @@ size_t size = sizeof(a++);
 printf("size: %lu, a: %d", size, a);
 ```
 Đoạn mã này in ra như sau.
-```C
+```
 size: 4, a: 0
 ```
-Biểu thức được truyền vào `sizeof` thực sự không được đánh giá tại thời gian chạy trong hầu hết các trường hợp, vì kiểu (do đó kích thước) của biểu thức có thể được tính toán tại thời điểm biên dịch. Tuy nhiên, có những ngoại lệ trong trường hợp của [mảng có độ dài biến thiên C99](http://port70.net/~nsz/c/c11/n1570.html#6.5.3.4p2), vì kích thước của chúng được xác định tại thời gian chạy.
+Biểu thức được truyền vào `sizeof` **không** thực sự được đánh giá tại thời điểm chạy trong hầu hết các trường hợp, vì kiểu dữ liệu (và do đó là kích thước) của biểu thức có thể được tính toán tại thời điểm biên dịch. Tuy nhiên, có những ngoại lệ trong trường hợp [mảng có độ dài biến đổi C99](http://port70.net/~nsz/c/c11/n1570.html#6.5.3.4p2), vì kích thước của chúng được xác định tại thời điểm chạy.
 
 <div align="center">
 <a href="https://github.com/angrave/SystemProgramming/wiki/C-Programming,-Part-2:-Text-Input-And-Output">
-Quay lại: Lập trình C, Phần 2: Nhập và Xuất Văn Bản
+Quay lại: Học Ngữ Lập Trình C, Phần 2: Nhập và Xuất Văn Bản
 </a> |
 <a href="https://github.com/angrave/SystemProgramming/wiki/C-Programming%2C-Part-4%3A-Strings-and-Structs">
-Tiếp theo: Lập trình C, Phần 4: Chuỗi và Cấu trúc
+Tiếp theo: Học Ngữ Lập Trình C, Phần 4: Chuỗi và Cấu trúc
 </a>
 </div>
