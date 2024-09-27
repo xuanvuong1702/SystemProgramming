@@ -1,5 +1,5 @@
 ---
-title: "Chương 01: Introduction C"
+title: "Chương 01: C Programming, Part 1: Introduction"
 type: book-en-us
 order: 1
 ---
