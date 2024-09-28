@@ -1,22 +1,19 @@
-> Lưu ý các vấn đề đồng bộ hóa lập trình luồng nằm trên một trang wiki riêng biệt. Trang này tập trung vào các chủ đề khái niệm.
-> Số câu hỏi có thể thay đổi
- 
 ## Câu hỏi 1
 Mỗi điều kiện Coffman có nghĩa là gì? (ví dụ: bạn có thể cung cấp định nghĩa cho từng điều kiện)
 * Giữ và chờ
 * Chờ đợi vòng tròn
-* Không chiếm quyền ưu tiên
+* Không thể giải phóng (tài nguyên)
 * Loại trừ lẫn nhau
 
 ## Câu hỏi 2
 Hãy cho một ví dụ thực tế về việc phá vỡ từng điều kiện Coffman. Một tình huống cần xem xét: Thợ sơn, sơn và cọ sơn.
 Giữ và chờ
 Chờ đợi vòng tròn
-Không chiếm quyền ưu tiên
+Không thể giải phóng (tài nguyên)
 Loại trừ lẫn nhau
 
 ## Câu hỏi 3
-Xác định khi nào mã Triết gia ăn tối gây ra deadlock (hoặc không). Ví dụ: nếu bạn thấy đoạn mã sau, điều kiện Coffman nào không được thỏa mãn?
+Xác định khi nào mã Triết gia ăn tối gây ra tình trạng bế tắc (hoặc không). Ví dụ: nếu bạn thấy đoạn mã sau, điều kiện Coffman nào không được thỏa mãn?
 
 ```C
 // Nhận cả hai khóa hoặc không có khóa nào.
@@ -28,7 +25,7 @@ if (pthread_mutex_trylock(b)) { /* thất bại */
 ```
 
 ## Câu hỏi 4
-Có bao nhiêu tiến trình bị chặn?
+Có bao nhiêu tiến trình bị blocked? (bị chặn)
 
 * P1 chiếm R1
 * P2 chiếm R2
@@ -43,12 +40,8 @@ Có bao nhiêu tiến trình bị chặn?
 ## Câu hỏi 5 
 Có bao nhiêu câu sau đây đúng với bài toán người đọc-người viết?
 
-* Có thể có nhiều người đọc đang hoạt động
-* Có thể có nhiều người viết đang hoạt động
-* Khi có một người viết đang hoạt động, số lượng người đọc đang hoạt động phải bằng không
-* Nếu có một người đọc đang hoạt động, số lượng người viết đang hoạt động phải bằng không
-* Người viết phải đợi cho đến khi những người đọc đang hoạt động hiện tại kết thúc
-
-
-
-
+* Có thể có nhiều trình đọc đang hoạt động
+* Có thể có nhiều trình viết đang hoạt động
+* Khi có một trình viết đang hoạt động, số lượng trình đọc đang hoạt động phải bằng không
+* Nếu có một trình đọc đang hoạt động, số lượng trình viết đang hoạt động phải bằng không
+* Trình viết phải đợi cho đến khi các trình đọc đang hoạt động hiện tại kết thúc

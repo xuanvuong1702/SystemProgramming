@@ -2,7 +2,7 @@
 
 Phần tiếp theo đề cập đến những gì xảy ra khi các pthread va chạm, nhưng nếu chúng ta có mỗi luồng làm một việc hoàn toàn khác, không chồng chéo thì sao?
 
-Chúng ta đã tìm thấy tốc độ tối đa của các bài toán song song?
+Chúng ta đã tìm thấy tốc độ tối đa cho các bài toán song song?
 
 ## Các bài toán song song dễ dàng (Embarrassingly Parallel Problems)
 
@@ -17,11 +17,11 @@ void merge_sort(int *arr, size_t len){
      }
 ```
 
-Với hiểu biết mới của bạn về luồng, tất cả những gì bạn cần làm là tạo một luồng cho nửa bên trái và một luồng cho nửa bên phải. Cho rằng CPU của bạn có nhiều lõi thực, bạn sẽ thấy tốc độ tăng theo [Định luật Amdahl](https://en.wikipedia.org/wiki/Amdahl's_law). Phân tích độ phức tạp thời gian cũng trở nên thú vị ở đây. Thuật toán song song chạy trong thời gian chạy O(log^3(n)) (vì chúng ta phân tích ưa thích giả sử rằng chúng ta có rất nhiều lõi).
+Với hiểu biết mới của bạn về luồng, tất cả những gì bạn cần làm là tạo một luồng cho nửa bên trái và một luồng cho nửa bên phải. Giả sử CPU của bạn có nhiều lõi thực, bạn sẽ thấy tốc độ tăng theo [Định luật Amdahl](https://en.wikipedia.org/wiki/Amdahl's_law). Phân tích độ phức tạp thời gian cũng trở nên thú vị ở đây. Thuật toán song song chạy trong thời gian chạy O(log^3(n)) (vì chúng ta phân tích dựa trên giả định rằng chúng ta có rất nhiều lõi).
 
-Tuy nhiên, trong thực tế, chúng ta thường thực hiện hai thay đổi. Thứ nhất, một khi mảng trở nên đủ nhỏ, chúng ta bỏ thuật toán sắp xếp trộn song song và thực hiện quicksort hoặc thuật toán khác hoạt động nhanh trên các mảng nhỏ (một cái gì đó giống như sự kết hợp bộ nhớ cache). Điều khác mà chúng ta biết là CPU không có lõi vô hạn. Để giải quyết vấn đề đó, chúng ta thường giữ một nhóm công nhân.
+Tuy nhiên, trong thực tế, chúng ta thường thực hiện hai thay đổi. Thứ nhất, một khi mảng trở nên đủ nhỏ, chúng ta bỏ thuật toán sắp xếp trộn song song và thực hiện quicksort hoặc thuật toán khác hoạt động nhanh trên các mảng nhỏ (liên quan đến tính kết hợp bộ nhớ đệm). Điều khác mà chúng ta biết là CPU không có lõi vô hạn. Để giải quyết vấn đề đó, chúng ta thường sử dụng một nhóm worker.
 
-## Nhóm công nhân (Worker Pool)
+## Nhóm Worker (Worker Pool)
 
 Chúng ta biết rằng CPU có một số lượng lõi hữu hạn. Rất nhiều lần chúng ta khởi động một số luồng và giao nhiệm vụ cho chúng khi chúng rảnh rỗi.
 
@@ -39,21 +39,21 @@ int *map(int (*func)(int), int *arr, size_t len){
 }
 ```
 
-Vì không có phần tử nào phụ thuộc vào bất kỳ phần tử nào khác, bạn sẽ làm thế nào để song song hóa điều này? Bạn nghĩ cách nào là tốt nhất để phân chia công việc giữa các luồng.
+Vì không có phần tử nào phụ thuộc vào bất kỳ phần tử nào khác, bạn sẽ làm thế nào để song song hóa điều này? Bạn nghĩ cách nào là tốt nhất để phân chia công việc giữa các luồng?
 
 ## Lập lịch (Scheduling)
 
 Có một số cách để phân chia công việc.
-* Lập lịch tĩnh: chia các bài toán thành các khối có kích thước cố định (được xác định trước) và để mỗi luồng làm việc trên mỗi khối. Điều này hoạt động tốt khi mỗi bài toán con mất gần cùng một thời gian vì không có thêm chi phí. Tất cả những gì bạn cần làm là viết một vòng lặp và cung cấp hàm ánh xạ cho mỗi mảng con.
-* Lập lịch động: khi một bài toán mới xuất hiện, hãy để một luồng phục vụ nó. Điều này rất hữu ích khi bạn không biết việc lập lịch sẽ mất bao lâu
-* Lập lịch hướng dẫn: Đây là sự kết hợp của hai cách trên với sự kết hợp của các lợi ích và sự đánh đổi. Bạn bắt đầu với một lịch trình tĩnh và chuyển sang động nếu cần
-* Lập lịch thời gian chạy: Bạn hoàn toàn không biết các bài toán sẽ mất bao lâu. Thay vì tự quyết định, hãy để chương trình quyết định phải làm gì!
+* **Lập lịch tĩnh**: chia các bài toán thành các khối có kích thước cố định (được xác định trước) và để mỗi luồng làm việc trên mỗi khối. Điều này hoạt động tốt khi mỗi bài toán con mất gần cùng một thời gian vì không có thêm chi phí. Tất cả những gì bạn cần làm là viết một vòng lặp và cung cấp hàm ánh xạ cho mỗi mảng con.
+* **Lập lịch động**: khi một bài toán mới xuất hiện, hãy để một luồng phục vụ nó. Điều này rất hữu ích khi bạn không biết việc lập lịch sẽ mất bao lâu.
+* **Lập lịch hướng dẫn**: Đây là sự kết hợp của hai cách trên với sự kết hợp của các lợi ích và sự đánh đổi. Bạn bắt đầu với một lịch trình tĩnh và chuyển sang động nếu cần.
+* **Lập lịch thời gian chạy**: Bạn hoàn toàn không biết các bài toán sẽ mất bao lâu. Thay vì tự quyết định, hãy để chương trình quyết định phải làm gì!
 
 [nguồn](https://software.intel.com/en-us/articles/openmp-loop-scheduling), nhưng không cần ghi nhớ.
 
 ## Một vài nhược điểm
 
-Bạn sẽ không thấy tốc độ tăng ngay lập tức vì những thứ như sự kết hợp bộ nhớ cache và lập lịch thêm luồng.
+Bạn sẽ không thấy tốc độ tăng ngay lập tức vì những thứ như tính kết hợp bộ nhớ đệm và lập lịch thêm luồng.
 
 ## Các bài toán khác
 
@@ -68,8 +68,9 @@ Từ [Wikipedia](https://en.wikipedia.org/wiki/Embarrassingly_parallel)
 * Siêu học tính toán tiến hóa chẳng hạn như thuật toán di truyền.
 * Tính toán tập hợp của dự đoán thời tiết số.
 * Mô phỏng và tái tạo sự kiện trong vật lý hạt.
-* Thuật toán marching squares
+* Thuật toán marching squares.
 * Bước sàng lọc của sàng bậc hai và sàng trường số.
 * Bước phát triển cây của kỹ thuật học máy rừng ngẫu nhiên.
 * Biến đổi Fourier rời rạc trong đó mỗi sóng hài được tính toán độc lập.
+
 

@@ -36,7 +36,7 @@ int main() {
 
 ```
 
-Tiến trình cha gửi các byte `H,i,(space),C...!` vào pipe (điều này có thể bị chặn nếu pipe đầy).
+Tiến trình cha gửi các byte `H,i,(dấu cách),C...!` vào pipe (điều này có thể bị chặn nếu pipe đầy).
 Tiến trình con bắt đầu đọc pipe từng byte một. Trong trường hợp trên, tiến trình con sẽ đọc và in từng ký tự. Tuy nhiên, nó không bao giờ thoát khỏi vòng lặp while! Khi không còn ký tự nào để đọc, nó chỉ đơn giản là bị chặn và chờ thêm.
 
 Lệnh gọi `putchar` ghi các ký tự ra nhưng chúng ta không bao giờ xóa bộ đệm `stdout`. Tức là, chúng ta đã chuyển tin nhắn từ tiến trình này sang tiến trình khác nhưng nó vẫn chưa được in ra. Để xem tin nhắn, chúng ta có thể xóa bộ đệm, ví dụ: `fflush(stdout)` (hoặc `printf("\n")` nếu đầu ra đang được chuyển đến terminal). Một giải pháp tốt hơn cũng sẽ thoát khỏi vòng lặp bằng cách kiểm tra dấu hiệu kết thúc tin nhắn,
@@ -44,7 +44,7 @@ Lệnh gọi `putchar` ghi các ký tự ra nhưng chúng ta không bao giờ x�
 ```C
         while ((bytesread = read(fd[0], &buf, 1)) > 0) {
             putchar(buf);
-            if (buf == '!') break; /* End of message */
+            if (buf == '!') break; /* Kết thúc tin nhắn */
         }
 ```
 
@@ -94,7 +94,7 @@ int main() {
     if (p > 0) {
         int score;
         fscanf(reader, "Score %d", &score);
-        printf("The child says the score is %d\n", score);
+        printf("Tiến trình con cho biết điểm số là %d\n", score);
     } else {
         fprintf(writer, "Score %d", 10 + 10);
         fflush(writer);
@@ -142,7 +142,7 @@ Mẹo: Lưu ý chỉ người ghi (không phải người đọc) mới có th�
 #include <signal.h>
 
 void no_one_listening(int signal) {
-    write(1, "No one is listening!\n", 21);
+    write(1, "Không có ai đang lắng nghe!\n", 27);
 }
 
 int main() {
@@ -251,4 +251,6 @@ int main() {
 |-----------|-----------|
 |  open(O_RDWR) & write()  |           |
 |  close() & exit()   |  (Pipe có tên bị hủy)  |
-|   (Chặn vô thời hạn)        |    open(O_RDONLY)       |
+|   (Bị chặn vô thời hạn)        |    open(O_RDONLY)       |
+
+

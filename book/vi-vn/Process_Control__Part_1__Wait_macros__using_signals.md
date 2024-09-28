@@ -1,8 +1,8 @@
 ## Macro Chờ
 
-### Tôi có thể tìm ra giá trị trả về của tiến trình con không?
+### Tôi có thể tìm ra giá trị thoát của tiến trình con không?
 
-Bạn có thể tìm thấy 8 bit thấp nhất của giá trị trả về của tiến trình con (giá trị trả về của hàm `main()` hoặc giá trị được bao gồm trong hàm `exit()`): Sử dụng "Wait macros" - thông thường bạn sẽ sử dụng "WIFEXITED" và "WEXITSTATUS". Xem trang hướng dẫn `wait`/`waitpid` để biết thêm thông tin).
+Bạn có thể tìm thấy 8 bit thấp nhất của giá trị thoát của tiến trình con (giá trị trả về của hàm `main()` hoặc giá trị được bao gồm trong hàm `exit()`): Sử dụng "macro Wait" - thông thường bạn sẽ sử dụng "WIFEXITED" và "WEXITSTATUS". Xem trang hướng dẫn `wait`/`waitpid` để biết thêm thông tin).
 
 ```C
 int status;
@@ -20,11 +20,11 @@ if (child > 0) { /* Tôi là tiến trình cha - chờ tiến trình con kết t
 }
 ```
 
-Một tiến trình chỉ có thể có 256 giá trị trả về, các bit còn lại là thông tin.
+Một tiến trình chỉ có thể có 256 giá trị trả về, các bit còn lại mang thông tin bổ sung.
 
 ## Dịch Bit
 
-Lưu ý rằng không cần phải ghi nhớ điều này, đây chỉ là tổng quan cấp cao về cách thông tin được lưu trữ bên trong các biến trạng thái
+Lưu ý rằng không cần phải ghi nhớ điều này, đây chỉ là tổng quan cấp cao về cách thông tin được lưu trữ bên trong các biến trạng thái.
 
 Từ mã nguồn Android:
 ```C
@@ -49,7 +49,7 @@ Kernel có cách thức nội bộ để theo dõi trạng thái đã được b
 
 ## Hãy cẩn thận.
 
-Hãy nhớ rằng các macro chỉ có ý nghĩa nếu điều kiện tiên quyết được đáp ứng. Có nghĩa là trạng thái thoát của một tiến trình sẽ không được xác định nếu tiến trình đó được báo hiệu. Các macro sẽ không thực hiện việc kiểm tra cho bạn, vì vậy tùy thuộc vào lập trình viên để đảm bảo logic kiểm tra được thực hiện.
+Hãy nhớ rằng các macro chỉ có ý nghĩa nếu điều kiện tiên quyết được đáp ứng. Có nghĩa là trạng thái thoát của một tiến trình sẽ không được xác định nếu tiến trình đó nhận được tín hiệu. Các macro sẽ không thực hiện việc kiểm tra cho bạn, vì vậy tùy thuộc vào lập trình viên để đảm bảo logic kiểm tra được thực hiện.
 
 # Tín hiệu
 
@@ -106,6 +106,7 @@ My pid is 403
 ```
 
 ## Làm cách nào để kill/stop/suspend tiến trình con của tôi từ C?
+
 Trong C, gửi tín hiệu đến tiến trình con bằng cách sử dụng lệnh gọi POSIX `kill`,
 ```C
 kill(child, SIGUSR1); // Gửi tín hiệu do người dùng định nghĩa
@@ -114,8 +115,8 @@ kill(child, SIGTERM); // Kết thúc tiến trình con (tiến trình con có th
 kill(child, SIGINT); // Tương đương với CTRL-C (theo mặc định sẽ đóng tiến trình)
 ```
 
-Như chúng ta đã thấy ở trên, cũng có một lệnh kill có sẵn trong shell
-ví dụ: lấy danh sách các tiến trình đang chạy và sau đó kết thúc tiến trình 45 và tiến trình 46
+Như chúng ta đã thấy ở trên, cũng có một lệnh kill có sẵn trong shell,
+ví dụ: lấy danh sách các tiến trình đang chạy và sau đó kết thúc tiến trình 45 và tiến trình 46.
 ```
 ps
 kill -l 
@@ -124,9 +125,9 @@ kill -s TERM 46
 ```
 ## Làm cách nào tôi có thể phát hiện "CTRL-C" và dọn dẹp một cách duyên dáng?
 
-Chúng ta sẽ quay lại tín hiệu sau - đây chỉ là phần giới thiệu ngắn. Trên hệ thống Linux, hãy xem `man -s7 signal` nếu bạn muốn tìm hiểu thêm (ví dụ: danh sách các lệnh gọi hệ thống và thư viện an toàn với tín hiệu không đồng bộ).
+Chúng ta sẽ quay lại tín hiệu sau - đây chỉ là phần giới thiệu ngắn. Trên hệ thống Linux, hãy xem `man 7 signal` nếu bạn muốn tìm hiểu thêm (ví dụ: danh sách các lệnh gọi hệ thống và thư viện an toàn với tín hiệu không đồng bộ).
 
-Có những hạn chế nghiêm ngặt đối với mã thực thi bên trong trình xử lý tín hiệu. Hầu hết các lệnh gọi thư viện và hệ thống không 'an toàn với tín hiệu không đồng bộ' - chúng có thể không được sử dụng bên trong trình xử lý tín hiệu vì chúng không an toàn khi nhập lại. Trong một chương trình đơn luồng, việc xử lý tín hiệu tạm thời làm gián đoạn việc thực thi chương trình để thực thi mã trình xử lý tín hiệu thay thế. Giả sử chương trình ban đầu của bạn bị gián đoạn trong khi thực thi mã thư viện của `malloc`; các cấu trúc bộ nhớ được sử dụng bởi malloc sẽ không ở trạng thái nhất quán. Gọi `printf` (sử dụng `malloc`) như một phần của trình xử lý tín hiệu là không an toàn và sẽ dẫn đến "hành vi không xác định", tức là nó không còn là một chương trình hữu ích, có thể đoán trước được. Trong thực tế, chương trình của bạn có thể bị sập, tính toán hoặc tạo ra kết quả không chính xác hoặc ngừng hoạt động ("deadlock"), tùy thuộc vào chính xác những gì chương trình của bạn đang thực thi khi nó bị gián đoạn để thực thi mã trình xử lý tín hiệu.
+Có những hạn chế nghiêm ngặt đối với mã thực thi bên trong trình xử lý tín hiệu. Hầu hết các lệnh gọi thư viện và hệ thống không 'an toàn với tín hiệu không đồng bộ' - chúng có thể không được sử dụng bên trong trình xử lý tín hiệu vì chúng không an toàn khi tái nhập. Trong một chương trình đơn luồng, việc xử lý tín hiệu tạm thời làm gián đoạn việc thực thi chương trình để thực thi mã trình xử lý tín hiệu thay thế. Giả sử chương trình ban đầu của bạn bị gián đoạn trong khi thực thi mã thư viện của `malloc`; các cấu trúc bộ nhớ được sử dụng bởi malloc sẽ không ở trạng thái nhất quán. Gọi `printf` (sử dụng `malloc`) như một phần của trình xử lý tín hiệu là không an toàn và sẽ dẫn đến "hành vi không xác định", tức là nó không còn là một chương trình hữu ích, có thể đoán trước được. Trong thực tế, chương trình của bạn có thể bị sập, tính toán hoặc tạo ra kết quả không chính xác hoặc ngừng hoạt động ("deadlock"), tùy thuộc vào chính xác những gì chương trình của bạn đang thực thi khi nó bị gián đoạn để thực thi mã trình xử lý tín hiệu.
 
 
 Một cách sử dụng phổ biến của trình xử lý tín hiệu là đặt cờ boolean được thăm dò (đọc) thường xuyên như một phần của hoạt động bình thường của chương trình. Ví dụ:

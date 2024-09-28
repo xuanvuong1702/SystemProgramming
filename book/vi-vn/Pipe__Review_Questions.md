@@ -9,13 +9,13 @@ int main() {
         pid_t pid = fork();
         if (pid == 0) { /* tiến trình con */
             char buffer[16];
-            sprintf(buffer, ______, i);
-            int fds[______];
+            sprintf(buffer, "%d", i);
+            int fds[2];
             pipe(fds);
-            write(fds[1], ______, ______); // Ghi bộ đệm vào pipe
-            close(______);
-            dup2(fds[0], ______);
-            execlp("cat", "cat",  ______);
+            write(fds[1], buffer, strlen(buffer)); // Ghi bộ đệm vào pipe
+            close(fds[1]);
+            dup2(fds[0], 0); 
+            execlp("cat", "cat",  NULL);
             perror("exec"); exit(1);
         }
         waitpid(pid, NULL, 0);

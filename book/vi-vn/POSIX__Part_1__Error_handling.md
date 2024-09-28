@@ -1,13 +1,13 @@
 # Xử lý lỗi POSIX là gì?
 
-Trong các ngôn ngữ khác, bạn có thể thấy việc xử lý lỗi được triển khai bằng các ngoại lệ (exception). Mặc dù về mặt kỹ thuật, bạn có thể sử dụng chúng trong C -- Bạn giữ một ngăn xếp các khối try/catch và sử dụng `setjmp` và `longjmp` để chuyển đến các khối đó tương ứng -- việc xử lý lỗi trong C thường được thực hiện bằng cách xử lý lỗi POSIX, mã thường trông như thế này.
+Trong các ngôn ngữ khác, bạn có thể thấy việc xử lý lỗi được triển khai bằng các ngoại lệ (exception). Mặc dù về mặt kỹ thuật, bạn có thể sử dụng chúng trong C -- Bạn giữ một ngăn xếp các khối try/catch và sử dụng `setjmp` và `longjmp` để nhảy đến các khối đó tương ứng -- việc xử lý lỗi trong C thường được thực hiện bằng cách xử lý lỗi POSIX, mã thường trông như thế này.
 
 ```C
-int ret = some_system_call()
+int ret = some_system_call();
 if(ret == ERROR_CODE){
-switch(errno){
-// Thực hiện các việc khác nhau dựa trên số errno.
-}
+  switch(errno){
+    // Thực hiện các việc khác nhau dựa trên số errno.
+  }
 }
 
 ```
@@ -15,7 +15,7 @@ switch(errno){
 Trong kernel, việc sử dụng `goto` được sử dụng rất nhiều để dọn dẹp các phần khác nhau của ứng dụng. **Bạn không nên sử dụng goto** vì chúng làm cho mã khó đọc hơn. Goto trong kernel tồn tại là do sự cần thiết, vì vậy đừng học theo.
 
 ## `errno` là gì và khi nào nó được đặt?
-	
+
 POSIX định nghĩa một số nguyên đặc biệt `errno` được đặt khi một lệnh gọi hệ thống thất bại.
 Giá trị ban đầu của `errno` là 0 (tức là không có lỗi).
 Khi một lệnh gọi hệ thống thất bại, nó thường sẽ trả về -1 để biểu thị lỗi và đặt `errno`
@@ -26,7 +26,7 @@ Mỗi luồng có bản sao `errno` riêng. Điều này rất hữu ích; nếu
 
 ## Khi nào `errno` được đặt lại về 0?
 
-Nó không được đặt lại trừ khi bạn đặc biệt đặt lại về 0! Khi các lệnh gọi hệ thống thành công, chúng _không_ đặt lại giá trị của `errno`.
+Nó không được đặt lại trừ khi bạn chủ động đặt lại về 0! Khi các lệnh gọi hệ thống thành công, chúng _không_ đặt lại giá trị của `errno`.
 
 Điều này có nghĩa là bạn chỉ nên dựa vào giá trị của errno nếu bạn biết một lệnh gọi hệ thống đã thất bại (ví dụ: nó trả về -1).
 
@@ -83,7 +83,7 @@ void perror(char *what) {
 
 Thật không may, `strerror` không an toàn cho luồng. Nói cách khác, hai luồng không thể gọi nó cùng một lúc!
 
-Có hai cách giải quyết: Đầu tiên, chúng ta có thể sử dụng khóa mutex để xác định một phần quan trọng và một bộ đệm cục bộ. Cùng một mutex nên được sử dụng bởi tất cả các luồng ở tất cả các nơi gọi `strerror`
+Có hai cách giải quyết: Đầu tiên, chúng ta có thể sử dụng khóa mutex để xác định một đoạn mã tới hạn và một bộ đệm cục bộ. Cùng một mutex nên được sử dụng bởi tất cả các luồng ở tất cả các nơi gọi `strerror`
 
 ```C
 pthread_mutex_lock(&m);
@@ -95,7 +95,7 @@ fprintf(stderr, "An error occurred (errno=%d): %s", errno, message);
 free(message);
 ```
 
-Ngoài ra, hãy sử dụng `strerror_r` ít di động hơn nhưng an toàn cho luồng. `perror` an toàn cho luồng, đó là lý do tại sao nó được ưu tiên trong môi trường đa luồng nếu có thể.
+Ngoài ra, hãy sử dụng `strerror_r` ít khả chuyển hơn nhưng an toàn cho luồng. `perror` an toàn cho luồng, đó là lý do tại sao nó được ưu tiên trong môi trường đa luồng nếu có thể.
 
 ## `EINTR` là gì? Nó có ý nghĩa gì đối với `sem_wait`? `read`? `write`?
 
@@ -119,7 +119,7 @@ Trên Linux, việc gọi `read` và `write` vào đĩa cục bộ thường s�
 
 ## Lệnh gọi hệ thống nào có thể bị gián đoạn và cần được bao bọc?
 
-Sử dụng trang hướng dẫn! Trang hướng dẫn bao gồm danh sách các lỗi (tức là giá trị errno) có thể được đặt bởi lệnh gọi hệ thống. Nguyên tắc chung là các lệnh gọi 'chậm' (chặn) (ví dụ: ghi vào socket) có thể bị gián đoạn nhưng các lệnh gọi không chặn nhanh (ví dụ: pthread_mutex_lock) sẽ không bị gián đoạn.
+Sử dụng trang hướng dẫn (man page)! Trang hướng dẫn bao gồm danh sách các lỗi (tức là giá trị errno) có thể được đặt bởi lệnh gọi hệ thống. Nguyên tắc chung là các lệnh gọi 'chậm' (chặn) (ví dụ: ghi vào socket) có thể bị gián đoạn nhưng các lệnh gọi không chặn nhanh (ví dụ: pthread_mutex_lock) sẽ không bị gián đoạn.
 
 Từ trang hướng dẫn tín hiệu 7 của linux:
 
@@ -138,3 +138,5 @@ Lưu ý, thật dễ dàng để tin rằng việc đặt cờ 'SA_RESTART' là 
 ## Ngoại lệ Errno?
 
 Có một số tiện ích POSIX có số lỗi riêng và không sử dụng `errno`. Một ví dụ là khi bạn gọi `getaddrinfo` trả về mã lỗi làm kết quả của nó. Hàm để kiểm tra chuyển đổi số lỗi được trả về thành chuỗi là [gai_strerr](https://linux.die.net/man/3/gai_strerror).
+
+

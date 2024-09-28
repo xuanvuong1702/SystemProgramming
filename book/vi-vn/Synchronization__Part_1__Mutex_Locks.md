@@ -1,10 +1,10 @@
-# Giải quyết đoạn mã quan trọng
+# Giải quyết đoạn mã nguy hiểm
 
-## Đoạn mã quan trọng là gì?
-Đoạn mã quan trọng là một đoạn mã chỉ có thể được thực thi bởi một luồng tại một thời điểm, nếu chương trình hoạt động chính xác (chính xác, có nghĩa là đưa ra kết quả đúng, hiện tại). Nếu hai luồng (hoặc tiến trình) thực thi mã bên trong đoạn mã quan trọng cùng một lúc thì có khả năng chương trình có thể không còn hoạt động chính xác.
+## Đoạn mã nguy hiểm là gì?
+Đoạn mã nguy hiểm là một đoạn mã chỉ có thể được thực thi bởi một luồng tại một thời điểm, nếu chương trình hoạt động chính xác (chính xác, ở đây có nghĩa là đưa ra kết quả đúng). Nếu hai luồng (hoặc tiến trình) thực thi mã bên trong đoạn mã nguy hiểm cùng một lúc thì có khả năng chương trình có thể không còn hoạt động chính xác.
 
-## Việc chỉ tăng một biến có phải là một đoạn mã quan trọng không?
-Có thể. Việc tăng một biến (`i++`) được thực hiện trong ba bước riêng biệt: Sao chép nội dung bộ nhớ vào thanh ghi CPU. Tăng giá trị trong CPU. Lưu giá trị mới vào bộ nhớ. Nếu vị trí bộ nhớ chỉ có thể được truy cập bởi một luồng (ví dụ: biến tự động `i` bên dưới) thì không có khả năng xảy ra race condition và không có Đoạn mã quan trọng nào được liên kết với `i`. Tuy nhiên, biến `sum` là một biến toàn cục và được truy cập bởi hai luồng. Có thể hai luồng cố gắng tăng biến cùng một lúc.
+## Việc chỉ tăng một biến có phải là một đoạn mã nguy hiểm không?
+Có thể. Việc tăng một biến (`i++`) được thực hiện trong ba bước riêng biệt: Sao chép nội dung bộ nhớ vào thanh ghi CPU. Tăng giá trị trong CPU. Lưu giá trị mới vào bộ nhớ. Nếu vị trí bộ nhớ chỉ có thể được truy cập bởi một luồng (ví dụ: biến tự động `i` bên dưới) thì không có khả năng xảy ra race condition và không có Đoạn mã nguy hiểm nào được liên kết với `i`. Tuy nhiên, biến `sum` là một biến toàn cục và được truy cập bởi hai luồng. Có thể hai luồng cố gắng tăng biến cùng một lúc.
 ```C
 #include <stdio.h>
 #include <pthread.h>
@@ -40,18 +40,18 @@ int main()
 
 ```
 Đầu ra điển hình của mã trên là `ARGGGH sum là 8140268`
-Một đầu ra khác nhau được in mỗi khi chương trình được chạy vì có race condition; mã không ngăn hai luồng đọc-ghi `sum` cùng một lúc. Ví dụ: cả hai luồng đều sao chép giá trị hiện tại của `sum` vào CPU chạy mỗi luồng (giả sử chọn 123). Cả hai luồng đều tăng một vào bản sao của riêng chúng. Cả hai luồng đều ghi lại giá trị (124). Nếu các luồng đã truy cập tổng vào những thời điểm khác nhau thì số lượng sẽ là 125.
-* Chúng ta có thể cung cấp giới hạn trên và giới hạn dưới cho đầu ra của chương trình trên không?
+Một đầu ra khác nhau được in mỗi khi chương trình được chạy vì có race condition; mã không ngăn hai luồng đọc-ghi `sum` cùng một lúc. Ví dụ: cả hai luồng đều sao chép giá trị hiện tại của `sum` vào CPU chạy mỗi luồng (giả sử chọn 123). Cả hai luồng đều tăng một vào bản sao của riêng chúng. Cả hai luồng đều ghi lại giá trị (124). Nếu các luồng đã truy cập sum vào những thời điểm khác nhau thì số lượng sẽ là 125.
+* Chúng ta có thể cung cấp giới hạn trên và giới hạn dưới cho đầu ra của chương trình trên không? **Có, giới hạn dưới là 10000000 (nếu chỉ một luồng tăng biến) và giới hạn trên là 20000000 (nếu cả hai luồng đều tăng biến mà không có race condition).**
 
 ## Làm cách nào để đảm bảo chỉ có một luồng tại một thời điểm có thể truy cập biến toàn cục?
 Ý bạn là, "Cứu tôi - Tôi cần một mutex!"
-Nếu một luồng hiện đang ở bên trong một đoạn mã quan trọng, chúng tôi muốn luồng khác đợi cho đến khi luồng đầu tiên hoàn thành. Vì mục đích này, chúng ta có thể sử dụng mutex (viết tắt của Mutual Exclusion - Loại trừ lẫn nhau).
+Nếu một luồng hiện đang ở bên trong một đoạn mã nguy hiểm, chúng tôi muốn luồng khác đợi cho đến khi luồng đầu tiên hoàn thành. Vì mục đích này, chúng ta có thể sử dụng mutex (viết tắt của Mutual Exclusion - Loại trừ lẫn nhau).
 
 Đối với các ví dụ đơn giản, lượng mã nhỏ nhất mà chúng ta cần thêm chỉ là ba dòng:
 ```C
 pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER; // biến toàn cục
-pthread_mutex_lock(&m);   // bắt đầu Đoạn mã quan trọng
-pthread_mutex_unlock(&m); // kết thúc Đoạn mã quan trọng
+pthread_mutex_lock(&m);   // bắt đầu Đoạn mã nguy hiểm
+pthread_mutex_unlock(&m); // kết thúc Đoạn mã nguy hiểm
 ```
 Khi chúng ta hoàn thành với mutex, chúng ta cũng nên gọi `pthread_mutex_destroy(&m)`. Lưu ý, _bạn chỉ có thể hủy một mutex đã được mở khóa._ Việc gọi destroy trên một khóa đã bị hủy, khởi tạo một khóa đã được khởi tạo, khóa một khóa đã bị khóa, mở khóa một khóa đã được mở khóa, v.v. là không được hỗ trợ (ít nhất là đối với mutex mặc định) và thường dẫn đến hành vi không xác định.
 
@@ -61,7 +61,7 @@ Không, các luồng khác sẽ tiếp tục. Chỉ khi một luồng cố gắn
 ## Có cách nào khác để tạo mutex không?
 Có. Bạn có thể sử dụng macro `PTHREAD_MUTEX_INITIALIZER` chỉ cho các biến toàn cục ('tĩnh').
 `m = PTHREAD_MUTEX_INITIALIZER` tương đương với mục đích chung hơn
-`pthread_mutex_init(&m,NULL)`. Phiên bản init bao gồm các tùy chọn để _trao đổi hiệu suất_ để kiểm tra lỗi bổ sung và các tùy chọn chia sẻ nâng cao.
+`pthread_mutex_init(&m,NULL)`. Phiên bản `init` bao gồm các tùy chọn để _trao đổi hiệu suất_ để kiểm tra lỗi bổ sung và các tùy chọn chia sẻ nâng cao.
 
 ```C
 pthread_mutex_t *lock = malloc(sizeof(pthread_mutex_t)); 
@@ -72,7 +72,7 @@ pthread_mutex_destroy(lock);
 free(lock);
 ```
 Những điều cần lưu ý về `init` và `destroy`:
-* Nhiều luồng thực hiện init/destroy có hành vi không xác định
+* Nhiều luồng thực hiện `init`/`destroy` có hành vi không xác định
 * Hủy mutex đã khóa có hành vi không xác định
 * Về cơ bản, hãy cố gắng giữ nguyên mẫu của một luồng khởi tạo mutex và một và chỉ một luồng hủy mutex.
 
@@ -81,7 +81,7 @@ Những điều cần lưu ý về `init` và `destroy`:
 ## Vậy `pthread_mutex_lock` có dừng các luồng khác khi chúng đọc cùng một biến không?
 Không. Mutex không thông minh như vậy - nó hoạt động với mã (luồng), không phải dữ liệu. Chỉ khi một luồng khác gọi `lock` trên mutex đã khóa, luồng khác mới cần đợi cho đến khi mutex được mở khóa.
 
-Xem xét
+Xem xét:
 ```C
 int a;
 pthread_mutex_t m1 = PTHREAD_MUTEX_INITIALIZER;
@@ -101,11 +101,10 @@ pthread_mutex_unlock(&m2);
 
 Vẫn sẽ gây ra race condition.
 
-
 ## Tôi có thể tạo mutex trước khi forking không?
 Có - tuy nhiên, tiến trình con và tiến trình cha sẽ không chia sẻ bộ nhớ ảo và mỗi tiến trình sẽ có một mutex độc lập với tiến trình kia.
 
-(Lưu ý nâng cao: Có các tùy chọn nâng cao sử dụng bộ nhớ dùng chung cho phép tiến trình con và tiến trình cha chia sẻ mutex nếu nó được tạo với các tùy chọn chính xác và sử dụng đoạn bộ nhớ dùng chung. Xem [ví dụ stackoverflow](http://stackoverflow.com/questions/19172541/procs-fork-and-mutexes))
+**(Lưu ý nâng cao: Có các tùy chọn nâng cao sử dụng bộ nhớ dùng chung cho phép tiến trình con và tiến trình cha chia sẻ mutex nếu nó được tạo với các tùy chọn chính xác và sử dụng đoạn bộ nhớ dùng chung. Xem [ví dụ stackoverflow](http://stackoverflow.com/questions/19172541/procs-fork-and-mutexes))**
 
 ## Nếu một luồng khóa mutex, thì luồng khác có thể mở khóa nó không?
 Không. Cùng một luồng phải mở khóa nó.
@@ -115,13 +114,13 @@ Có! Trên thực tế, việc có một khóa cho mỗi cấu trúc dữ liệu
 
 Nếu bạn chỉ có một khóa, thì có thể có sự tranh chấp đáng kể cho khóa giữa hai luồng là không cần thiết. Ví dụ: nếu hai luồng đang cập nhật hai bộ đếm khác nhau, thì có thể không cần thiết phải sử dụng cùng một khóa.
  
-Tuy nhiên, chỉ đơn giản là tạo nhiều khóa là không đủ: Điều quan trọng là phải có khả năng lý giải về các đoạn mã quan trọng, ví dụ: điều quan trọng là một luồng không thể đọc hai cấu trúc dữ liệu trong khi chúng đang được cập nhật và tạm thời ở trạng thái không nhất quán.
+Tuy nhiên, chỉ đơn giản là tạo nhiều khóa là không đủ: Điều quan trọng là phải có khả năng lý giải về các đoạn mã nguy hiểm, ví dụ: điều quan trọng là một luồng không thể đọc hai cấu trúc dữ liệu trong khi chúng đang được cập nhật và tạm thời ở trạng thái không nhất quán.
 
 ## Có bất kỳ chi phí nào trong việc gọi khóa và mở khóa không?
 Có một lượng nhỏ chi phí khi gọi `pthread_mutex_lock` và `_unlock`; tuy nhiên đây là cái giá bạn phải trả cho các chương trình hoạt động chính xác!
 
 ## Ví dụ đầy đủ đơn giản nhất?
-Một ví dụ đầy đủ được hiển thị bên dưới
+Một ví dụ đầy đủ được hiển thị bên dưới.
 ```C
 #include <stdio.h>
 #include <pthread.h>
@@ -136,7 +135,7 @@ void *countgold(void *param) {
     int i;
     
     // Cùng một luồng khóa mutex phải mở khóa nó
-    // Đoạn mã quan trọng chỉ là 'sum += 1'
+    // Đoạn mã nguy hiểm chỉ là 'sum += 1'
     // Tuy nhiên, việc khóa và mở khóa một triệu lần
     // có chi phí đáng kể trong câu trả lời đơn giản này
     
@@ -165,7 +164,7 @@ int main() {
 }
 ```
 
-Trong mã trên, luồng nhận được khóa vào nhà đếm trước khi vào. Đoạn mã quan trọng chỉ là `sum += 1` nên phiên bản sau cũng chính xác nhưng chậm hơn - 
+Trong mã trên, luồng nhận được khóa vào nhà đếm trước khi vào. Đoạn mã nguy hiểm chỉ là `sum += 1` nên phiên bản sau cũng chính xác nhưng chậm hơn - 
 ```C
     for (i = 0; i < 10000000; i++) {
         pthread_mutex_lock(&m);
@@ -192,7 +191,7 @@ Quá trình này chạy chậm hơn vì chúng ta khóa và mở khóa mutex m�
 
 ## Điều gì xảy ra nếu tôi quên mở khóa?
 
-Deadlock! Chúng ta sẽ nói về deadlock sau một chút nhưng vấn đề với vòng lặp này là gì nếu được gọi bởi nhiều luồng.
+Deadlock! Chúng ta sẽ nói về deadlock sau một chút nhưng vấn đề với vòng lặp này là gì nếu được gọi bởi nhiều luồng? **Vấn đề là nếu `rand() % 2` trả về 1, vòng lặp sẽ tiếp tục mà không mở khóa mutex. Điều này có nghĩa là bất kỳ luồng nào khác cố gắng khóa mutex sẽ bị chặn mãi mãi, dẫn đến deadlock.**
 
 ```C
 while (not_stop) {
@@ -241,19 +240,18 @@ void unlock(mutex_t *m) {
 
 }
 ```
-Phiên bản 1 sử dụng 'busy-waiting' (lãng phí tài nguyên CPU một cách không cần thiết) tuy nhiên có một vấn đề nghiêm trọng hơn: Chúng ta có race-condition! 
+Phiên bản 1 sử dụng 'busy-waiting' (lãng phí tài nguyên CPU một cách không cần thiết), tuy nhiên, có một vấn đề nghiêm trọng hơn: Chúng ta có race-condition! 
 
 Nếu hai luồng đều gọi `lock` đồng thời thì có thể cả hai luồng đều đọc 'm_locked' là 0. Do đó, cả hai luồng sẽ tin rằng chúng có quyền truy cập độc quyền vào khóa và cả hai luồng sẽ tiếp tục. Ôi!
 
-Điều gì sẽ xảy ra nếu một trong nhiều luồng thực sự có thể lấy khóa, gọi `unlock` và hành vi của các luồng khác muốn `lock` sẽ như thế nào?  
+**Điều gì sẽ xảy ra nếu một trong nhiều luồng thực sự có thể lấy khóa, gọi `unlock` và hành vi của các luồng khác muốn `lock` sẽ như thế nào? Trên máy đơn CPU, vòng lặp while sẽ hoạt động chính xác vì chỉ có một luồng có thể chạy tại một thời điểm. Tuy nhiên, trên máy đa CPU, các luồng khác có thể tiếp tục quay vòng trong khi luồng sở hữu khóa đã mở khóa mutex. Điều này dẫn đến lãng phí CPU và có khả năng bỏ lỡ cơ hội để các luồng khác có được khóa.**
 
+Chúng ta có thể cố gắng giảm chi phí CPU một chút bằng cách gọi, [pthread_yield](http://man7.org/linux/man-pages/man3/pthread_yield.3.html) bên trong vòng lặp  - `pthread_yield` gợi ý cho hệ điều hành rằng luồng không sử dụng CPU trong một thời gian ngắn, vì vậy CPU có thể được gán cho các luồng đang chờ chạy. Nhưng không khắc phục được race-condition.
 
-Chúng ta có thể cố gắng giảm chi phí CPU một chút bằng cách gọi, [pthread_yield](http://man7.org/linux/man-pages/man3/pthread_yield.3.html) bên trong vòng lặp  - pthread_yield gợi ý cho hệ điều hành rằng luồng không sử dụng CPU trong một thời gian ngắn, vì vậy CPU có thể được gán cho các luồng đang chờ chạy. Nhưng không khắc phục được race-condition.
+**Tại sao nó không khắc phục được race-condition?**
+**Nó thậm chí không phải là một nỗ lực để khắc phục nó, nó là một nỗ lực để làm cho mã chạy nhanh hơn.** 
 
-Tại sao nó không khắc phục được race-condition?
-Nó thậm chí không phải là một nỗ lực để khắc phục nó, nó là một nỗ lực để làm cho mã chạy nhanh hơn. 
-
-Chúng ta cần một triển khai tốt hơn - bạn có thể làm việc để ngăn chặn race-condition không?
+Chúng ta cần một triển khai tốt hơn - bạn có thể làm việc để ngăn chặn race-condition không? **Để ngăn chặn race condition, chúng ta cần sử dụng các lệnh gọi hệ thống nguyên tử, chẳng hạn như `atomic_compare_exchange_weak` hoặc các nguyên thủy đồng bộ hóa khác được cung cấp bởi hệ điều hành.**
 
 
 ## Làm cách nào để tôi tìm hiểu thêm?

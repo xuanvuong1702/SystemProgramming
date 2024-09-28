@@ -4,11 +4,11 @@ RPC là viết tắt của Remote Procedure Call (Gọi thủ tục từ xa). RP
 
 ## Phân tách đặc quyền (Privilege Separation) là gì?
 
-Mã từ xa sẽ thực thi dưới một người dùng khác và với các đặc quyền khác với người gọi. Trong thực tế, lệnh gọi từ xa có thể thực thi với nhiều hoặc ít đặc quyền hơn người gọi. Về nguyên tắc, điều này có thể được sử dụng để cải thiện bảo mật của hệ thống (bằng cách đảm bảo các thành phần hoạt động với đặc quyền tối thiểu). Thật không may, các mối quan tâm bảo mật cần được đánh giá cẩn thận để đảm bảo rằng các cơ chế RPC không thể bị phá hoại để thực hiện các hành động không mong muốn. Ví dụ: một triển khai RPC có thể ngầm tin tưởng bất kỳ máy khách được kết nối nào để thực hiện bất kỳ hành động nào, thay vì một tập hợp con các hành động trên một tập hợp con của dữ liệu.
+Mã từ xa sẽ thực thi dưới một người dùng khác và với các đặc quyền khác với người gọi. Trong thực tế, lệnh gọi từ xa có thể thực thi với nhiều hoặc ít đặc quyền hơn người gọi. Về nguyên tắc, điều này có thể được sử dụng để cải thiện bảo mật của hệ thống (bằng cách đảm bảo các thành phần hoạt động với đặc quyền tối thiểu). Thật không may, các mối quan tâm bảo mật cần được đánh giá cẩn thận để đảm bảo rằng các cơ chế RPC không thể bị phá hoại để thực hiện các hành động không mong muốn. Ví dụ, việc triển khai RPC có thể ngầm tin tưởng bất kỳ máy khách được kết nối nào để thực hiện bất kỳ hành động nào, thay vì một tập hợp con các hành động trên một tập hợp con của dữ liệu.
 
 ## Mã stub là gì? Marshalling là gì?
 
-Mã stub là mã cần thiết để ẩn đi sự phức tạp của việc thực hiện một lệnh gọi thủ tục từ xa. Một trong những vai trò của mã stub là _marshalling_ dữ liệu cần thiết thành một định dạng có thể được gửi dưới dạng luồng byte đến một máy chủ từ xa.
+Mã stub là mã cần thiết để ẩn đi sự phức tạp của việc thực hiện một lệnh gọi thủ tục từ xa. Một trong những vai trò của mã stub là **marshalling** dữ liệu cần thiết thành một định dạng có thể được gửi dưới dạng luồng byte đến một máy chủ từ xa.
 
 ````C
 // Bên ngoài, 'getHiscore' trông giống như một lệnh gọi hàm bình thường
@@ -17,10 +17,10 @@ Mã stub là mã cần thiết để ẩn đi sự phức tạp của việc th�
 int getHiscore(char* game) {
   // Marshall yêu cầu thành một chuỗi byte:
   char* buffer;
-  asprintf(&buffer,"getHiscore(%s)!", game);
+  asprintf(&buffer, "getHiscore(%s)!", game);
 
   // Gửi qua mạng (chúng ta không gửi byte 0; dấu '!' biểu thị kết thúc của thông báo)
-  write(fd, buffer, strlen(buffer) );
+  write(fd, buffer, strlen(buffer));
 
   // Chờ máy chủ gửi phản hồi
   ssize_t bytesread = read(fd, buffer, 8); // chúng ta biết bộ đệm sẽ có ít nhất 8 byte và điều đó là đủ.
@@ -29,21 +29,21 @@ int getHiscore(char* game) {
   // Ví dụ: unmarshall các byte nhận được từ văn bản thành một int
   buffer[bytesread] = 0; // Biến kết quả thành một chuỗi C
 
-  int score= atoi(buffer);
+  int score = atoi(buffer);
   free(buffer);
   return score;
 }
 ````
 
 ## Mã stub máy chủ là gì? Unmarshalling là gì?
-Mã stub máy chủ sẽ nhận yêu cầu, unmarshall yêu cầu thành dữ liệu hợp lệ trong bộ nhớ, gọi triển khai bên dưới và gửi kết quả trở lại cho người gọi.
+Mã stub máy chủ sẽ nhận yêu cầu, **unmarshall** yêu cầu thành dữ liệu hợp lệ trong bộ nhớ, gọi triển khai bên dưới và gửi kết quả trở lại cho người gọi.
 
 ## Làm cách nào để bạn gửi một int? float? một struct? Một danh sách liên kết? Một đồ thị?
 Để triển khai RPC, bạn cần quyết định (và ghi lại) các quy ước mà bạn sẽ sử dụng để tuần tự hóa dữ liệu thành một chuỗi byte. Ngay cả một số nguyên đơn giản cũng có một số lựa chọn phổ biến:
 * Có dấu hay không dấu?
 * ASCII
 * Số byte cố định hay thay đổi tùy thuộc vào độ lớn
-* Định dạng nhị phân Little hay Big endian?
+* Định dạng nhị phân Little endian hay Big endian?
 
 Để marshall một struct, hãy quyết định trường nào cần được tuần tự hóa. Có thể không cần thiết phải gửi tất cả các mục dữ liệu (ví dụ: một số mục có thể không liên quan đến RPC cụ thể hoặc có thể được máy chủ tính toán lại từ các mục dữ liệu khác hiện có).
 
@@ -55,7 +55,7 @@ Bằng cách bắt đầu tại nút/đỉnh đầu, một cây đơn giản có
 
 Viết mã stub bằng tay rất khó khăn, tẻ nhạt, dễ xảy ra lỗi, khó bảo trì và khó thiết kế ngược giao thức mạng từ mã đã triển khai. Một cách tiếp cận tốt hơn là chỉ định các đối tượng dữ liệu, thông báo và dịch vụ và tự động tạo mã máy khách và máy chủ.
 
-Một ví dụ hiện đại về Ngôn ngữ mô tả giao diện là các tệp .proto của Google Protocol Buffer.
+Một ví dụ hiện đại về Ngôn ngữ Mô tả Giao diện là các tệp .proto của Google Protocol Buffer.
 
 ## Độ phức tạp và thách thức của RPC so với các lệnh gọi cục bộ?
 
@@ -73,7 +73,7 @@ Hãy xem xét ba phương pháp chuyển dữ liệu bằng cách sử dụng 3 
 ````
 
 ````javascript
-{ 'currency':'dollar' , 'vendor':'travelocity', 'price':'10' }
+{ "currency": "dollar", "vendor": "travelocity", "price": "10" }
 ````
 
 Google Protocol Buffers là một giao thức nhị phân hiệu quả mã nguồn mở, đặt trọng tâm mạnh mẽ vào thông lượng cao với chi phí CPU thấp và sao chép bộ nhớ tối thiểu. Các triển khai tồn tại cho nhiều ngôn ngữ bao gồm Go, Python, C++ và C. Điều này có nghĩa là mã stub máy khách và máy chủ bằng nhiều ngôn ngữ có thể được tạo từ tệp đặc tả .proto để marshall dữ liệu đến và từ luồng nhị phân.
@@ -81,3 +81,5 @@ Google Protocol Buffers là một giao thức nhị phân hiệu quả mã ngu�
 Google Protocol Buffers giảm vấn đề phiên bản bằng cách bỏ qua các trường không xác định hiện có trong một thông báo. Xem phần giới thiệu về Protocol Buffers để biết thêm thông tin.
 
 [[https://developers.google.com/protocol-buffers/docs/overview]]
+
+

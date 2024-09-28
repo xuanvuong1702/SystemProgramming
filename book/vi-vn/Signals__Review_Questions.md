@@ -4,7 +4,7 @@
 
 Hai tín hiệu thường được tạo ra bởi kernel là:
 
-* **SIGSEGV:** Tín hiệu này được tạo ra khi một chương trình cố gắng truy cập vào một vùng bộ nhớ không hợp lệ (segmentation fault).
+* **SIGSEGV:** Tín hiệu này được tạo ra khi một chương trình cố gắng truy cập vào một vùng bộ nhớ không hợp lệ (lỗi segmentation fault).
 * **SIGCHLD:** Tín hiệu này được tạo ra khi một tiến trình con kết thúc.
 
 
@@ -22,7 +22,7 @@ Việc gọi các hàm không an toàn với trình xử lý tín hiệu trong m
 
 ## Câu hỏi về mã
 
-Viết một đoạn mã ngắn sử dụng SIGACTION và SIGNALSET để tạo một SIGALRM handler.
+Viết một đoạn mã ngắn sử dụng `SIGACTION` và `SIGNALSET` để tạo một `SIGALRM` handler.
 
 ```c
 #include <stdio.h>
@@ -60,11 +60,11 @@ int main() {
 
 **Giải thích mã:**
 
-* Đầu tiên, ta khai báo một hàm `sigalrm_handler` để xử lý tín hiệu SIGALRM. Hàm này đơn giản in ra một thông báo.
+* Đầu tiên, ta khai báo một hàm `sigalrm_handler` để xử lý tín hiệu `SIGALRM`. Hàm này đơn giản in ra một thông báo.
 * Trong hàm `main`, ta khai báo một cấu trúc `sigaction` và gán hàm xử lý `sigalrm_handler` cho `sa.sa_handler`.
-* Ta sử dụng `sigemptyset` để khởi tạo mặt nạ tín hiệu `sa.sa_mask`为空集. Điều này có nghĩa là không có tín hiệu nào bị chặn trong khi xử lý tín hiệu SIGALRM.
+* Ta sử dụng `sigemptyset` để khởi tạo mặt nạ tín hiệu `sa.sa_mask` thành tập rỗng. Điều này có nghĩa là không có tín hiệu nào bị chặn trong khi xử lý tín hiệu `SIGALRM`.
 * Ta đặt `sa.sa_flags` thành 0, không sử dụng cờ đặc biệt nào.
-* Sau đó, ta sử dụng `sigaction` để cài đặt trình xử lý SIGALRM.
+* Sau đó, ta sử dụng `sigaction` để cài đặt trình xử lý `SIGALRM`.
 * Ta sử dụng `alarm(3)` để đặt báo thức cho 3 giây.
 * Cuối cùng, ta sử dụng `pause()` để chờ tín hiệu báo thức. Khi tín hiệu báo thức được gửi đến, signal handler sẽ được gọi và in ra thông báo.
 
@@ -72,5 +72,6 @@ int main() {
 
 * `perror` được sử dụng để in ra thông báo lỗi nếu `sigaction` thất bại.
 * `exit(1)` được sử dụng để thoát chương trình với mã lỗi 1 nếu `sigaction` thất bại.
+
 
 

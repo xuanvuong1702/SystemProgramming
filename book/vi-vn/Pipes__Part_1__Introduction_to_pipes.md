@@ -1,8 +1,8 @@
 ## IPC là gì?
 
-Giao tiếp liên tiến trình (Inter-process communication - IPC) là bất kỳ cách nào để một tiến trình trao đổi thông tin với một tiến trình khác. Bạn đã thấy một hình thức của nó trong bộ nhớ ảo! Một phần của bộ nhớ ảo có thể được chia sẻ giữa tiến trình cha và tiến trình con, dẫn đến sự giao tiếp. Bạn có thể muốn bao bọc bộ nhớ đó trong mutex `pthread_mutexattr_setpshared(&attrmutex, PTHREAD_PROCESS_SHARED);` (hoặc mutex trên toàn tiến trình) để ngăn chặn tình trạng race condition.
+Giao tiếp liên tiến trình (Inter-Process Communication - IPC) là bất kỳ cách nào để một tiến trình trao đổi thông tin với một tiến trình khác. Bạn đã thấy một hình thức của nó trong bộ nhớ ảo! Một phần của bộ nhớ ảo có thể được chia sẻ giữa tiến trình cha và tiến trình con, dẫn đến sự giao tiếp. Bạn có thể muốn bao bọc bộ nhớ đó trong mutex `pthread_mutexattr_setpshared(&attrmutex, PTHREAD_PROCESS_SHARED);` (hoặc một mutex rộng trên toàn tiến trình) để ngăn chặn tình trạng race condition.
 
-Có nhiều cách IPC tiêu chuẩn hơn, chẳng hạn như pipe! Hãy xem xét nếu bạn gõ dòng sau vào terminal:
+Có nhiều cách IPC tiêu chuẩn hơn, chẳng hạn như pipe (ống)! Hãy xem xét nếu bạn gõ dòng sau vào terminal:
 
 ```bash
 $ ls -1 | cut -d'.' -f1 | uniq | sort | tee dir_contents
@@ -10,7 +10,7 @@ $ ls -1 | cut -d'.' -f1 | uniq | sort | tee dir_contents
 
 Đoạn mã sau làm gì (Nó không thực sự quan trọng nên bạn có thể bỏ qua phần này nếu muốn)? Nó sẽ liệt kê (`ls`) thư mục hiện tại (tham số `-1` nghĩa là nó xuất ra một mục trên mỗi dòng). Lệnh `cut` sau đó lấy mọi thứ trước dấu chấm đầu tiên. `uniq` đảm bảo tất cả các dòng là duy nhất, `sort` sắp xếp chúng và `tee` xuất ra một tệp.
 
-Phần quan trọng là bash tạo ra **5 tiến trình riêng biệt** và kết nối các stdout/stdin của chúng với các pipe theo sơ đồ sau:
+Phần quan trọng là bash tạo ra **5 tiến trình riêng biệt** và kết nối các stdout/stdin (luồng xuất chuẩn/luồng nhập chuẩn) của chúng với các pipe theo sơ đồ sau:
 
 (0) ls (1)------>(0) cut (1)------->(0) uniq (1)------>(0) sort (1)------>(0) tee (1)
 
@@ -18,7 +18,7 @@ Các số trong pipe là các bộ mô tả tệp (file descriptor) cho mỗi ti
 
 ## Pipe là gì?
 
-Một pipe POSIX gần giống như phiên bản thực tế của nó - bạn có thể đưa các byte vào một đầu và chúng sẽ xuất hiện ở đầu kia theo cùng thứ tự. Tuy nhiên, không giống như các pipe thực, luồng luôn theo cùng một hướng, một bộ mô tả tệp được sử dụng để đọc và bộ mô tả tệp kia để ghi. Lệnh gọi hệ thống `pipe` được sử dụng để tạo pipe.
+Một pipe POSIX gần giống như phiên bản thực tế của nó - bạn có thể đưa các byte vào một đầu và chúng sẽ xuất hiện ở đầu kia theo cùng thứ tự. Tuy nhiên, không giống như các ống thực tế, luồng luôn theo cùng một hướng, một bộ mô tả tệp được sử dụng để đọc và bộ mô tả tệp kia để ghi. Lệnh gọi hệ thống `pipe` được sử dụng để tạo pipe.
 
 ```C
 int filedes[2];
@@ -42,7 +42,7 @@ write(filedes[1], "Go!", 4);
 
 ## Làm cách nào tôi có thể sử dụng pipe để giao tiếp với một tiến trình con?
 
-Một phương pháp phổ biến để sử dụng pipe là tạo pipe trước khi fork.
+Một phương pháp phổ biến để sử dụng pipe là tạo pipe trước khi fork (tạo tiến trình con).
 
 ```C
 int filedes[2];
@@ -103,13 +103,11 @@ int main() {
     #define MESG "..............................."
     while(1) {
         printf("%d\n",b);
-        write(fh[1], MESG, sizeof(MESG))
+        write(fh[1], MESG, sizeof(MESG)); // Thêm dấu chấm phẩy ở đây
         b+=sizeof(MESG);
     }
     return 0;
 }
 ```
 
-Xem [[Pipes, Phần 2: Bí mật lập trình Pipe]]
-
-
+Xem [[Pipes, Phần 2: Bí mật lập trình với Pipe]] 
