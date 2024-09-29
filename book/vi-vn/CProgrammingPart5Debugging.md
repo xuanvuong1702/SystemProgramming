@@ -56,7 +56,7 @@ Kiểm tra này có thể bị tắt trong thời gian biên dịch, nhưng sẽ
 
 ## `printf`
 
-Khi mọi thứ khác thất bại, hãy in như điên! Mỗi hàm của bạn nên có ý tưởng về những gì nó sẽ làm (ví dụ: `find_min` tốt hơn nên tìm phần tử tối thiểu). Bạn muốn kiểm tra xem mỗi hàm của bạn có đang làm những gì nó đặt ra hay không và xem chính xác nơi mã của bạn bị hỏng. Trong trường hợp có điều kiện cuộc đua, tsan có thể giúp ích, nhưng việc để mỗi luồng in ra dữ liệu tại những thời điểm nhất định có thể giúp bạn xác định điều kiện cuộc đua.
+Khi mọi cách khác đều thất bại, hãy in ra liên tục! Mỗi hàm của bạn cần có mục tiêu rõ ràng về những gì nó sẽ thực hiện (ví dụ: hàm find_min cần phải tìm ra phần tử nhỏ nhất). Bạn cần kiểm tra xem mỗi hàm có đang thực hiện đúng nhiệm vụ đề ra hay không và xác định chính xác vị trí mã của bạn gặp lỗi. Trong trường hợp xảy ra điều kiện tranh chấp (race condition), tsan có thể hỗ trợ, nhưng việc để mỗi luồng in dữ liệu tại các thời điểm nhất định có thể giúp bạn phát hiện ra điều kiện tranh chấp.
 
 # Valgrind
 
